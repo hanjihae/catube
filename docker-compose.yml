@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/catube
+      SPRING_DATASOURCE_USERNAME: catube
+      SPRING_DATASOURCE_PASSWORD: catube
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: catube
+      MYSQL_USER: catube
+      MYSQL_PASSWORD: catube
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
