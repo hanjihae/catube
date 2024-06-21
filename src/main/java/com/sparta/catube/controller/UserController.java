@@ -1,11 +1,13 @@
 package com.sparta.catube.controller;
 
 import com.sparta.catube.service.UserService;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
     private final UserService userService;
 
@@ -14,8 +16,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping("/hello")
-    public String hello() {
-        return "hello";
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Hello, World!";
     }
+
 }
