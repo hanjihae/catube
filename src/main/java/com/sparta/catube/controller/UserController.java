@@ -1,13 +1,16 @@
 package com.sparta.catube.controller;
 
+import com.sparta.catube.dto.UserDto;
+import com.sparta.catube.entity.User;
 import com.sparta.catube.service.UserService;
 import jakarta.annotation.security.PermitAll;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@Slf4j
 public class UserController {
     private final UserService userService;
 
@@ -16,9 +19,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Hello, World!";
+    @PostMapping("/register")
+    public ResponseEntity<User> registerUser(@RequestBody UserDto userDto) {
+        User user = userService.registerUser(userDto);
+        return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody UserDto userDto) {
+        String token = userService.loginUser(userDto);
+        if (token != null) {
+            log.info("로그인 완료");
+        }
+        return ResponseEntity.ok(token);
+    }
 }
+

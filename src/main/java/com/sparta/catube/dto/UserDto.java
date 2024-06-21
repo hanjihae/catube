@@ -9,6 +9,7 @@ public class UserDto {
     private String userName;
     private String userNickname;
     private String userEmail;
+    private String userPw;
     private String userImgUrl;
     private String userLoginMethod;
     private String userStatus;
