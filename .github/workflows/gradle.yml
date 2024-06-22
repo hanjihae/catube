@@ -42,7 +42,7 @@ jobs:
       shell: bash
 
     - name: Setup MySQL
-      uses: catube/mysql-action@v1.1
+      uses: hanjihae/mysql-action@v1.1
       with:
         mysql database: 'catube'
         mysql user: 'catube'
