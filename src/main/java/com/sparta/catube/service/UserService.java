@@ -54,5 +54,4 @@ public class UserService {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(userDto.getUserEmail());
         return jwtTokenUtil.generateToken(userDetails);
     }
-
 }

@@ -20,6 +20,25 @@ services:
       MYSQL_PASSWORD: catube
     volumes:
       - db-data:/var/lib/mysql
+  web:
+    container_name: web
+    image: hanjihae/second-eyes-web
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+
+    nginx:
+      container_name: nginx
+      image: hanjihae/second-eyes-nginx
+      ports:
+        - 80:80
+      depends_on:
+        - web
+
+  networks:
+    app-network:
+      driver: bridge
 
 volumes:
   db-data:

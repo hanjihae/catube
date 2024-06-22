@@ -29,7 +29,7 @@ public class UserController {
     public ResponseEntity<String> loginUser(@RequestBody UserDto userDto) {
         String token = userService.loginUser(userDto);
         if (token != null) {
-            log.info("로그인 완료");
+            log.info("login success");
         }
         return ResponseEntity.ok(token);
     }
