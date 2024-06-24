@@ -17,28 +17,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
     - uses: actions/checkout@v3
 
     - name: Set up JDK 21
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3
       with:
+        distribution: 'zulu'
         java-version: '21'
-        distribution: 'temurin'
         cache: gradle
 
-
-    ## create application-database.yaml
-    - name: make application-database.yaml
+    - name: make application.properties
       run: |
-        # create application-database.yaml
+        mkdir -p ./src/main/resources
         cd ./src/main/resources
-        
-        # application-database.yaml 파일 생성
-        touch ./application-database.yaml
-        
-        # GitHub-Actions 에서 설정한 값을 application-database.yaml 파일에 쓰기
-        echo "${{ secrets.APPLICATION_PROPERTIES }}" >> ./application-database.yaml
+        touch application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" >> ./application.properties
       shell: bash
 
     - name: Setup MySQL
@@ -48,14 +41,24 @@ jobs:
         mysql user: 'catube'
         mysql password: ${{ secrets.MYSQL_PASSWORD }}
 
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
     - name: Build with Gradle
       run: ./gradlew bootJar
 
-    - name: web docker build and push
-      run: |
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_REPO }}/second-eyes-web .
-        docker push ${{ secrets.DOCKER_REPO }}/second-eyes-web
+    - name: Docker image build
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/view-app:latest .
+
+    - name: Docker login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Docker Hub push
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/view-app:latest
+
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
