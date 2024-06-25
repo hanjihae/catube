@@ -26,7 +26,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtTokenProvider jwtTokenProvider;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
 
@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 // 토큰에서 사용자 이름 추출
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                username = jwtTokenProvider.extractSubject(jwtToken);
             } catch (IllegalArgumentException e) {
                 logger.error("Unable to get JWT Token", e);
             } catch (ExpiredJwtException e) {
@@ -56,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             // 사용자 이름으로 UserDetails 가져오기
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             // 토큰이 유효한지 확인
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+            if (jwtTokenProvider.validateToken(jwtToken, userDetails)) {
                 setAuthentication(request, userDetails);
             }
         }
