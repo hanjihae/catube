@@ -52,5 +52,6 @@ public class User {
         this.userEmail = userEmail;
         this.userNickname = userNickname;
         this.userLoginMethod = userLoginMethod;
+        this.userType = "user";
     }
 }

@@ -14,18 +14,17 @@ public class AuthTokensGenerator {
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final KakaoApiClient kakaoApiClient; // 추가
 
     public AuthTokens generate(Long memberId) {
         long now = (new Date()).getTime();
         Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
 
-        // Kakao Access Token 요청
-        String accessToken = kakaoApiClient.requestAccessToken(new KakaoLoginParams(memberId.toString()));
+        String subject = memberId.toString();
+        String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
+        String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
 
-        // Kakao에서 받은 Access Token을 사용하여 memberId로 AccessToken 생성
-        return AuthTokens.of(accessToken, "", BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
+        return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
     }
 
     public Long extractMemberId(String accessToken) {

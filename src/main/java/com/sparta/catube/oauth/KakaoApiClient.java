@@ -40,7 +40,8 @@ public class KakaoApiClient implements OAuthApiClient {
         String url = authUrl + "/oauth/token";
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        httpHeaders.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
         MultiValueMap<String, String> body = params.makeBody();
         body.add("grant_type", GRANT_TYPE);
@@ -60,14 +61,16 @@ public class KakaoApiClient implements OAuthApiClient {
         String url = apiUrl + "/v2/user/me";
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        httpHeaders.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         httpHeaders.set("Authorization", "Bearer " + accessToken);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("property_keys", "[\"kakao_account.email\", \"kakao_account.profile\"]");
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
-
+        KakaoInfoResponse kakaoInfoResponse = restTemplate.postForObject(url, request, KakaoInfoResponse.class);
+        System.out.println(kakaoInfoResponse);
         return restTemplate.postForObject(url, request, KakaoInfoResponse.class);
     }
 }

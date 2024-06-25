@@ -27,8 +27,6 @@ public class OAuthLoginService {
 
     // 저장되어 있는 회원을 찾음
     private Long findOrCreateUser(OAuthInfoResponse oAuthInfoResponse) {
-        System.out.println("닉네임" + oAuthInfoResponse.getNickname());
-        System.out.println("로그인방법" + oAuthInfoResponse.getOAuthProvider());
         return userRepository.findByUserEmail(oAuthInfoResponse.getEmail())
                 .map(User::getUserId)
                 .orElseGet(() -> newUser(oAuthInfoResponse));
@@ -41,8 +39,6 @@ public class OAuthLoginService {
                 .userNickname(oAuthInfoResponse.getNickname())
                 .userLoginMethod(oAuthInfoResponse.getOAuthProvider().toString())
                 .build();
-        System.out.println("닉네임" + oAuthInfoResponse.getNickname());
-        System.out.println("로그인방법" + oAuthInfoResponse.getOAuthProvider());
         return userRepository.save(user).getUserId();
     }
 }

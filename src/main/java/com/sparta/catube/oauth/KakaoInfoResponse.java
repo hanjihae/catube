@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 public class KakaoInfoResponse implements OAuthInfoResponse {
-    @JsonProperty("kakao_acoount")
+    @JsonProperty("kakao_account")
     private KakaoAccount kakaoAccount;
 
     @Getter
