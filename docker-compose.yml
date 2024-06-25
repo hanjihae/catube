@@ -10,9 +10,12 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:${DB_PORT}/${SPRING_APPLICATION_NAME}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:${DB_PORT}/${SPRING_APPLICATION_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - app-network
+
   db:
     image: mysql:8
     ports:
@@ -24,6 +27,9 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
   web:
     container_name: web
     image: hanjihae/second-eyes-web
@@ -31,18 +37,22 @@ services:
       - 8080
     ports:
       - 8080:8080
+    networks:
+      - app-network
 
-    nginx:
-      container_name: nginx
-      image: hanjihae/second-eyes-nginx
-      ports:
-        - 80:80
-      depends_on:
-        - web
+  nginx:
+    container_name: nginx
+    image: hanjihae/second-eyes-nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    networks:
+      - app-network
 
-  networks:
-    app-network:
-      driver: bridge
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   db-data:

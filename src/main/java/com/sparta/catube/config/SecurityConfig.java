@@ -31,15 +31,16 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/login").permitAll()
-                        .anyRequest().authenticated()
+                        // .requestMatchers("/**").permitAll()
+                        .anyRequest().permitAll()
+                        // .authenticated()
                 )
                 // 인증 실패시 처리 설정
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 // 세션 관리 설정 - stateless 세션 사용X
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

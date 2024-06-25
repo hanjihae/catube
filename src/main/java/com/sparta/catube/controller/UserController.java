@@ -3,11 +3,12 @@ package com.sparta.catube.controller;
 import com.sparta.catube.dto.UserDto;
 import com.sparta.catube.entity.User;
 import com.sparta.catube.service.UserService;
-import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Slf4j
@@ -33,5 +34,6 @@ public class UserController {
         }
         return ResponseEntity.ok(token);
     }
+
 }
 

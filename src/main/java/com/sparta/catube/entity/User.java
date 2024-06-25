@@ -1,13 +1,13 @@
 package com.sparta.catube.entity;
 
-import com.sparta.catube.dto.UserDto;
+import com.sparta.catube.oauth.OAuthProvider;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -43,4 +43,14 @@ public class User {
     private String userLoginMethod;
 
     private String userStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OAuthProvider oAuthProvider;
+
+    @Builder
+    public User(String userEmail, String userNickname, String userLoginMethod) {
+        this.userEmail = userEmail;
+        this.userNickname = userNickname;
+        this.userLoginMethod = userLoginMethod;
+    }
 }
