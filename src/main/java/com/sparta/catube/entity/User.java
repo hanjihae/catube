@@ -1,23 +1,18 @@
 package com.sparta.catube.entity;
 
-import com.sparta.catube.common.BaseTimeEntity;
 import com.sparta.catube.oauth.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user")
 @Data
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class User extends BaseTimeEntity {
+public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;

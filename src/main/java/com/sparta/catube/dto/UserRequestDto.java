@@ -3,7 +3,7 @@ package com.sparta.catube.dto;
 import lombok.Data;
 
 @Data
-public class ReKakaoRequest {
+public class UserRequestDto {
     private Long userId;
     private String refreshToken;
 }

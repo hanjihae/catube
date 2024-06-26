@@ -1,4 +1,4 @@
-package com.sparta.catube.common;
+package com.sparta.catube.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -10,16 +10,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@EntityListeners(AuditingEntityListener.class)
-@MappedSuperclass
 @Getter
-public class BaseTimeEntity {
-
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class Timestamped {
     @CreatedDate
-    @Column(name = "created_at", updatable = false)
+    @Column(name="created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 }
