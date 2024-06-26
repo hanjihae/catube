@@ -24,7 +24,7 @@ public class OAuthLoginService {
         AuthTokens authTokens = authTokensGenerator.generate(userId);
 
         // AuthTokens 객체에 포함된 refreshToken을 userRepository를 통해 저장
-        String refreshToken = authTokens.getRefreshToken();
+        String refreshToken = "Bearer " + authTokens.getRefreshToken();
         userRepository.saveUserRefreshToken(userId, refreshToken);
 
         return authTokens;

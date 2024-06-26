@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,41 +34,38 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        // 요청 헤더에서 JWT 토큰 가져오기
-        final String requestTokenHeader = request.getHeader("Authorization");
-        String username = null;
-        String jwtToken = null;
-        // 토큰이 "Bearer "로 시작하는지 확인
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                // 토큰에서 사용자 이름 추출
-                username = jwtTokenProvider.parseSubject(jwtToken);
-            } catch (IllegalArgumentException e) {
-                logger.error("Unable to get JWT Token", e);
-            } catch (ExpiredJwtException e) {
-                logger.warn("JWT Token has expired", e);
+        try {
+            String jwtToken = extractJwtFromRequest(request);
+            if (jwtToken != null) {
+                String subject = jwtTokenProvider.parseSubject(jwtToken);
+                if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    if (jwtTokenProvider.validateToken(jwtToken, subject)) { // validateToken에 token과 subject 모두 전달
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                Long.parseLong(subject), null, null);
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));  // 인증 객체 세부정보 추가
+                        SecurityContextHolder.getContext().setAuthentication(authentication);   // 인증 객체 설정
+                    }
+                }
             }
-        } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+        } catch (Exception e) {
+            logger.error("Could not set user authentication in security context", e);
         }
-        // 사용자 이름이 존재하고, 현재 인증이 없는 경우
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // 사용자 이름으로 UserDetails 가져오기
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            // 토큰이 유효한지 확인
-            if (jwtTokenProvider.validateToken(jwtToken, userDetails)) {
-                setAuthentication(request, userDetails);
-            }
-        }
+
         chain.doFilter(request, response);
     }
 
-    private void setAuthentication(HttpServletRequest request, UserDetails userDetails) {
-       // 인증 정보 설정
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    private void setAuthentication(HttpServletRequest request, String subject) {
+        // 인증 정보 설정
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, null);
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

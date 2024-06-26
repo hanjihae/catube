@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByRefreshToken(@Param("refreshToken") String refreshToken);
 
     String findRefreshTokenByUserId(Long userId);
+
+    Optional<User> findByUserId(Long userId);
 }
