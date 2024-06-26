@@ -1,5 +1,6 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.common.BaseTimeEntity;
 import com.sparta.catube.oauth.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +16,8 @@ import java.time.LocalDateTime;
 @Table(name = "user")
 @Data
 @NoArgsConstructor
-public class User {
+@EntityListeners(AuditingEntityListener.class)
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -30,14 +33,6 @@ public class User {
 
     private String userPw;
     private String userImgUrl;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime userCreatedAt;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime userUpdatedAt;
 
     @Column(nullable = false)
     private String userLoginMethod;

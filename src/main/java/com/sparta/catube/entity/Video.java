@@ -1,8 +1,10 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.sql.Time;
@@ -11,7 +13,8 @@ import java.sql.Time;
 @Table(name = "video")
 @Data
 @NoArgsConstructor
-public class Video {
+@EntityListeners(AuditingEntityListener.class)
+public class Video extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long videoId;
@@ -23,12 +26,6 @@ public class Video {
 
     @Column(nullable = false)
     private String videoUrl;
-
-    @Column(nullable = false, updatable = false)
-    private Timestamp videoUploadedAt;
-
-    @Column(nullable = false)
-    private Timestamp videoUpdatedAt;
 
     private int videoTotalViews;
     private Time videoTotalPlaytime;
