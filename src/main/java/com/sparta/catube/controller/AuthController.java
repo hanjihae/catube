@@ -1,5 +1,6 @@
 package com.sparta.catube.controller;
 
+import com.sparta.catube.dto.ReKakaoRequest;
 import com.sparta.catube.oauth.AuthTokens;
 import com.sparta.catube.oauth.KakaoLoginParams;
 import com.sparta.catube.service.OAuthLoginService;
@@ -24,9 +25,17 @@ public class AuthController {
     }
 
     @PostMapping("/re-kakao")
-    public ResponseEntity<AuthTokens> loginAgain(@RequestBody Long userId, @RequestBody String refreshToken) {
+    public ResponseEntity<AuthTokens> loginAgain(@RequestBody ReKakaoRequest reKakaoRequest) {
+        Long userId = reKakaoRequest.getUserId();
+        String refreshToken = reKakaoRequest.getRefreshToken();
         AuthTokens authTokens = oAuthLoginService.regenerateAccessToken(userId, refreshToken);
         return ResponseEntity.ok(authTokens);
+    }
+
+    @PostMapping("/logout")
+    public String logout(@RequestBody ReKakaoRequest reKakaoRequest) {
+        oAuthLoginService.logout(reKakaoRequest.getUserId());
+        return "Logout Success";
     }
 
 }

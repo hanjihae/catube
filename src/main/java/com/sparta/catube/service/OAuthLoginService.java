@@ -5,7 +5,9 @@ import com.sparta.catube.oauth.*;
 import com.sparta.catube.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,19 +34,31 @@ public class OAuthLoginService {
 
     @Transactional
     public AuthTokens regenerateAccessToken(Long userId, String providedRefreshToken) {
-        String refreshToken = userRepository.findRefreshTokenByUserId(userId);
-        User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("저장된 리프레시 토큰을 찾을 수 없습니다."));
+        User user = userRepository.findByUserId(userId).orElseThrow();
+        String refreshToken = user.getRefreshToken();
+        if (refreshToken == null) {
+            throw new RuntimeException("저장된 리프레시 토큰을 찾을 수 없습니다.");
+        }
         if (providedRefreshToken.equals(refreshToken)) {
             // 리프레시 토큰이 일치하면 새로운 Access 토큰 발급
             AuthTokens authTokens = authTokensGenerator.generate(user.getUserId());
+            // 새로 발급된 리프레시 토큰도 저장!!
+            String token = "Bearer " + authTokens.getRefreshToken();
+            userRepository.saveUserRefreshToken(userId, token);
             return authTokens;
         } else {
-            // 리프레시 토큰이 일치하지 않으면 로그아웃 처리 후 예외 발생
-            user.setRefreshToken(null); // 혹은 다른 방식으로 만료 처리 로직을 추가할 수 있음
-            userRepository.save(user); // 변경사항을 데이터베이스에 저장
-            throw new RuntimeException("저장된 리프레시 토큰과 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제공된 리프레시 토큰과 저장된 리프레시 토큰이 일치하지 않습니다.");
         }
+    }
+
+    @Transactional
+    public void logout(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        // 리프레시 토큰을 삭제하거나 만료 처리를 수행
+        user.setRefreshToken(null); // 예시로 간단히 삭제 처리
+        userRepository.save(user); // 변경사항을 데이터베이스에 저장
     }
 
     // 저장되어 있는 회원을 찾음
