@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 // 토큰에서 사용자 이름 추출
-                username = jwtTokenProvider.extractSubject(jwtToken);
+                username = jwtTokenProvider.parseSubject(jwtToken);
             } catch (IllegalArgumentException e) {
                 logger.error("Unable to get JWT Token", e);
             } catch (ExpiredJwtException e) {

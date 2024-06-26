@@ -28,6 +28,6 @@ public class AuthTokensGenerator {
     }
 
     public Long extractMemberId(String accessToken) {
-        return Long.valueOf(jwtTokenProvider.extractSubject(accessToken));
+        return Long.valueOf(jwtTokenProvider.parseSubject(accessToken));
     }
 }

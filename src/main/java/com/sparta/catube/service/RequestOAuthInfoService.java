@@ -1,5 +1,9 @@
-package com.sparta.catube.oauth;
+package com.sparta.catube.service;
 
+import com.sparta.catube.oauth.OAuthApiClient;
+import com.sparta.catube.oauth.OAuthInfoResponse;
+import com.sparta.catube.oauth.OAuthLoginParams;
+import com.sparta.catube.oauth.OAuthProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

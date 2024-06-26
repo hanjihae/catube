@@ -47,6 +47,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
 
+    private String refreshToken;
+
     @Builder
     public User(String userEmail, String userNickname, String userLoginMethod) {
         this.userEmail = userEmail;

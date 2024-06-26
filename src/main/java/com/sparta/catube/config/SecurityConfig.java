@@ -5,6 +5,7 @@ import com.sparta.catube.security.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,9 +30,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf((auth) -> auth.disable());    // csrf 비활성화
+        http
                 .authorizeHttpRequests(authorize -> authorize
-                        // .requestMatchers("/**").permitAll()
+                        .requestMatchers("/").permitAll()
                         .anyRequest().permitAll()
                         // .authenticated()
                 )
@@ -40,7 +42,7 @@ public class SecurityConfig {
                 // 세션 관리 설정 - stateless 세션 사용X
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
-//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
