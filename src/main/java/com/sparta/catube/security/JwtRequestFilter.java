@@ -39,11 +39,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (jwtToken != null) {
                 String subject = jwtTokenProvider.parseSubject(jwtToken);
                 if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    if (jwtTokenProvider.validateToken(jwtToken, subject)) { // validateToken에 token과 subject 모두 전달
+                    // UserDetailsService를 사용하여 사용자 정보를 가져옵니다.
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
+                    if (jwtTokenProvider.validateToken(jwtToken, userDetails.getUsername())) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                                Long.parseLong(subject), null, null);
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));  // 인증 객체 세부정보 추가
-                        SecurityContextHolder.getContext().setAuthentication(authentication);   // 인증 객체 설정
+                                userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
             }
@@ -53,7 +55,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
     private String extractJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

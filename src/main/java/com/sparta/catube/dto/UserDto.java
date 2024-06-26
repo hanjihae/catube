@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-public class UserDto {
+public class UserDto implements UserDetails{
     private Long userId;
     private String userType;
     private String userName;
@@ -18,4 +18,19 @@ public class UserDto {
     private String userImgUrl;
     private String userLoginMethod;
     private String userStatus;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return userPw;
+    }
+
+    @Override
+    public String getUsername() {
+        return String.valueOf(userId);
+    }
 }
