@@ -13,6 +13,5 @@ public class StatisticsDto {
     private int stValue;
     private Date stPeriodStart;
     private Date stPeriodEnd;
-    private Timestamp stCreatedAt;
     private Long stVideoId;
 }

@@ -10,5 +10,5 @@ public class VideoRequestDto {
     private String videoTitle;
     private String videoDescription;
     private String videoUrl;
-    private Time videoLength;
+    private long videoLength;
 }

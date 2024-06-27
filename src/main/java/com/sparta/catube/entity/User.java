@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.swing.text.StyledEditorKit;
+
 @Entity
 @Table(name = "user")
 @Data
@@ -32,7 +34,7 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String userLoginMethod;
 
-    private String userStatus;
+    private Boolean userStatus;
 
     @Enumerated(EnumType.STRING)
     private OAuthProvider oAuthProvider;
@@ -44,6 +46,7 @@ public class User extends Timestamped {
         this.userEmail = userEmail;
         this.userNickname = userNickname;
         this.userLoginMethod = userLoginMethod;
-        this.userType = "user";
+        this.userType = "USER";
+        this.userStatus = true;
     }
 }

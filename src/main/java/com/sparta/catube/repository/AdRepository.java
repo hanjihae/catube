@@ -1,9 +1,9 @@
 package com.sparta.catube.repository;
 
-import com.sparta.catube.entity.Video;
+import com.sparta.catube.entity.Ad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VideoRepository extends JpaRepository<Video, Long> {
+public interface AdRepository extends JpaRepository<Ad, Long> {
 }

@@ -16,5 +16,5 @@ public class Ad {
     private Long adId;
 
     private String adUrl;
-    private Time adLength;
+    private long adLength;
 }

@@ -10,7 +10,7 @@ public class ViewsDto {
     private Time viewsLastWatchedTime;
     private int viewsAdWatchedCount;
     private int viewsCount;
-    private Time viewsPlaytime;
+    private long viewsPlaytime;
     private Long viewsUserId;
     private Long viewsVideoId;
 }

@@ -3,6 +3,7 @@ package com.sparta.catube.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.mapping.ToOne;
 
 import java.sql.Time;
 
@@ -19,9 +20,9 @@ public class VideoAd {
     @JoinColumn(name = "vaVideoId")
     private Video video;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "vaAdId")
     private Ad ad;
 
-    private Time vaPosition;
+    private long vaPosition;
 }

@@ -9,5 +9,5 @@ public class VideoAdDto {
     private Long id;
     private Long vaVideoId;
     private Long vaAdId;
-    private Time vaPosition;
+    private long vaPosition;
 }

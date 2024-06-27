@@ -17,7 +17,7 @@ public class UserDto implements UserDetails{
     private String userPw;
     private String userImgUrl;
     private String userLoginMethod;
-    private String userStatus;
+    private Boolean userStatus;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
