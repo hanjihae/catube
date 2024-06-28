@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
-public class AuthController {
+public class UserController {
     @Autowired
     private final OAuthLoginService oAuthLoginService;
 
