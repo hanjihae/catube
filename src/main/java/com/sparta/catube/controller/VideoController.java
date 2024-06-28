@@ -47,8 +47,8 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
-    @PostMapping("/register-ad")
-    public String registerAd(@RequestBody Long videoId, @RequestBody List<AdRequestDto> adRequestDto) {
+    @PostMapping("/register-ad/{videoId}")
+    public String registerAd(@PathVariable Long videoId, @RequestBody List<AdRequestDto> adRequestDto) {
         try {
             boolean result = videoService.insertAdsIntoVideo(videoId, adRequestDto);
             return result ? "광고 등록 완료" : "광고 등록 실패";
