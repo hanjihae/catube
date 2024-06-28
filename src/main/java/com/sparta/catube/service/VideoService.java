@@ -68,14 +68,13 @@ public class VideoService {
         // 본인이 본인 동영상을 보면 조회수 카운트 X
         // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
         if (!video.getUser().getUserId().equals(authenticatedUserId)) {
-            // 시청기록이 24시간 내에 없다면 조회수 +1
-            if (views.getUpdatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
+            // 해당 동영상에 대한 개인의 시청기록 업뎃 time이 현재 시간보다 30초 이후일 때 +1 카운트
+            if (views.getUpdatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
                 views.setViewsCount(views.getViewsCount() + 1);
                 viewsRepository.save(views);
+                video.setVideoTotalViews(video.getVideoTotalViews() + 1);
+                videoRepository.save(video);
             }
-            int totalViews = viewsRepository.countByVideo_VideoId(videoId);
-            video.setVideoTotalViews(totalViews);
-            videoRepository.save(video);
         }
         return video.toDto();
     }
@@ -120,7 +119,12 @@ public class VideoService {
                 throw new Exception("귀하의 ID가 인증된 사용자의 ID와 일치하지 않습니다.");
             }
             // 광고 개수 = 동영상 길이 / 5분
-            int adCount = (int) video.getVideoLength() / 300;
+            int cnt = (int) video.getVideoLength() / 300;
+            int adCount = (int) video.getVideoLength() % 300 == 0 ?  cnt - 1 : cnt;
+            System.out.println(adCount);
+            if (adCount > adRequestDto.size()) {    // 넣을 수 있는 광고 개수보다 광고리스트에 있는 광고 개수보다 적다면
+                throw new Exception( "등록할 광고 개수가 부족합니다. \n 필요한 광고 개수 : " + adCount);
+            }
             for (int i=1; i <= adCount; i++) {
                 long position = i * 300;
                 VideoAd videoAd = new VideoAd();
@@ -130,18 +134,20 @@ public class VideoService {
             }
             // 해당 동영상에 삽입된 VideoAd 리스트
             List<VideoAd> vas = videoAdRepository.findByVideo(video);
-            int adIndex = 0;
-            for (VideoAd va : vas) {
-                if (adCount > adRequestDto.size()) {    // 넣을 수 있는 광고 개수보다 광고리스트에 있는 광고 개수보다 적다면
-                    throw new Exception(adCount - adRequestDto.size() + "개만큼 등록할 광고 개수가 부족합니다.");
+            System.out.println(vas.size());
+            for (int i = 0; i < vas.size(); i++) {
+                if (i < adRequestDto.size()) {
+                    AdRequestDto adDto = adRequestDto.get(i);
+                    Ad ad = new Ad();
+                    ad.setAdUrl(adDto.getAdUrl());
+                    ad.setAdLength(adDto.getAdLength());
+                    adRepository.save(ad);
+                    VideoAd va = vas.get(i);
+                    va.setAd(ad);
+                    videoAdRepository.save(va);
+                } else {
+                    break;
                 }
-                AdRequestDto adDto = adRequestDto.get(adIndex++);
-                Ad ad = new Ad();
-                ad.setAdUrl(adDto.getAdUrl());
-                ad.setAdLength(adDto.getAdLength());
-                adRepository.save(ad);
-                va.setAd(ad);
-                videoAdRepository.save(va);
             }
             return true;
         } catch (Exception e) {
