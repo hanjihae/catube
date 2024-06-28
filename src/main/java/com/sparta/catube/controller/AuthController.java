@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/logout")
     public String logout(@RequestBody UserRequestDto userRequestDto) {
         oAuthLoginService.logout(userRequestDto.getUserId());
-        return "Logout Success";
+        return "로그아웃하셨습니다.";
     }
 
 }

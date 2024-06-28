@@ -13,13 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.TimeZone;
 
 @Service
 @RequiredArgsConstructor
@@ -31,47 +26,50 @@ public class VideoService {
     private final VideoAdRepository videoAdRepository;
     private final AdRepository adRepository;
 
-    public Video createVideo(VideoRequestDto videoRequestDto) throws Exception {
+    private User getAuthenticatedUser() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long authenticatedUserId = Long.parseLong(authentication.getName());
-        User authenticatedUser = userRepository.findById(authenticatedUserId)
-                .orElseThrow(() -> new Exception("인증된 사용자를 찾을 수 없습니다."));
-        if (!authenticatedUser.getUserId().equals(videoRequestDto.getUserId())) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Long authenticatedUserId = Long.parseLong(userDetails.getUsername());
+        return userRepository.findByUserId(authenticatedUserId)
+                .orElseThrow(() -> new Exception("사용자를 찾을 수 없습니다."));
+    }
+
+    private Video getVideo(Long videoId) throws Exception {
+        return videoRepository.findById(videoId)
+                .orElseThrow(() -> new Exception("해당 비디오가 존재하지 않습니다."));
+    }
+
+    public Video createVideo(VideoRequestDto videoRequestDto) throws Exception {
+        User user = getAuthenticatedUser();
+        if (!user.getUserId().equals(videoRequestDto.getUserId())) {
             throw new Exception("귀하의 ID가 인증된 사용자의 ID와 일치하지 않습니다.");
         }
-        if (authenticatedUser.getUserType().equals("USER")) {
-            authenticatedUser.setUserType("SELLER");
+        if (user.getUserType().equals("USER")) {
+            user.setUserType("SELLER");
         }
         if (videoRequestDto.getVideoLength() > 86400) { // 동영상의 길이가 24시간 이상이면
             throw new Exception("용량 초과입니다.");
         }
         // 새로운 동영상 만들기
-        Video video = Video.of(authenticatedUser, videoRequestDto);
+        Video video = Video.of(user, videoRequestDto);
         return videoRepository.save(video);
     }
 
     public VideoDto watchVideo(Long videoId) throws Exception {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new Exception("해당 동영상을 찾을 수 없습니다."));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Long authenticatedUserId = Long.parseLong(userDetails.getUsername());
-        // 인증된 사용자의 정보 조회
-        Optional<User> user = userRepository.findByUserId(authenticatedUserId);
-        if (user.isEmpty()) {
-            throw new Exception("사용자를 찾을 수 없습니다.");
-        }
+        Video video = getVideo(videoId);
+        User user = getAuthenticatedUser();
+        Long authenticatedUserId = user.getUserId();
         // 현재 사용자의 시청기록 조회
         Views views = viewsRepository.findByUser_UserIdAndVideo_VideoId(authenticatedUserId, videoId)
                 .orElseGet(() -> {  // 시청기록이 없으면
-                    Views view = Views.createNewView(user.get(), video, authenticatedUserId);
+                    Views view = Views.createNewView(user, video, authenticatedUserId);
                     return viewsRepository.save(view);    // 새로운 시청기록 저장
                 });
         // 본인이 본인 동영상을 보면 조회수 카운트 X
         // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
         if (!video.getUser().getUserId().equals(authenticatedUserId)) {
             // 시청기록이 24시간 내에 없다면 조회수 +1
-            if (views.getCreatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
+            if (views.getUpdatedAt().isBefore(LocalDateTime.now().minusDays(1))) {
                 views.setViewsCount(views.getViewsCount() + 1);
                 viewsRepository.save(views);
             }
@@ -84,10 +82,10 @@ public class VideoService {
 
     @Transactional
     public VideoDto stopVideo(WatchedVideoRequestDto requestDto) throws Exception {
-        Video video = videoRepository.findById(requestDto.getVideoId())
-                .orElseThrow(() -> new Exception("해당 동영상을 찾을 수 없습니다."));
+        Video video = getVideo(requestDto.getVideoId());
+        User user = getAuthenticatedUser();
         // 현재 사용자의 시청 기록 조회
-        Views views = viewsRepository.findByUser_UserIdAndVideo_VideoId(requestDto.getUserId(), requestDto.getVideoId())
+        Views views = viewsRepository.findByUser_UserIdAndVideo_VideoId(user.getUserId(), requestDto.getVideoId())
                 .orElseThrow(() -> new Exception("사용자의 시청 기록을 찾을 수 없습니다."));
         long playTime = 0; // 동영상 시청 시간
         // 마지막 재생시점이 동영상 길이보다 길다면
@@ -116,8 +114,11 @@ public class VideoService {
     @Transactional
     public boolean insertAdsIntoVideo(Long videoId, List<AdRequestDto> adRequestDto) throws Exception {
         try {
-            Video video = videoRepository.findById(videoId)
-                    .orElseThrow(() -> new Exception("해당 비디오가 존재하지 않습니다."));
+            Video video = getVideo(videoId);
+            User user = getAuthenticatedUser();
+            if (!video.getUser().getUserId().equals(user.getUserId())) {
+                throw new Exception("귀하의 ID가 인증된 사용자의 ID와 일치하지 않습니다.");
+            }
             // 광고 개수 = 동영상 길이 / 5분
             int adCount = (int) video.getVideoLength() / 300;
             for (int i=1; i <= adCount; i++) {
@@ -127,7 +128,7 @@ public class VideoService {
                 videoAd.setVaPosition(position);
                 videoAdRepository.save(videoAd);
             }
-            // 해당 동영상에 삽인된 VideoAd 리스트
+            // 해당 동영상에 삽입된 VideoAd 리스트
             List<VideoAd> vas = videoAdRepository.findByVideo(video);
             int adIndex = 0;
             for (VideoAd va : vas) {
