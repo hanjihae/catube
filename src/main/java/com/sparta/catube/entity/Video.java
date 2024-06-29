@@ -1,15 +1,12 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.common.Timestamped;
 import com.sparta.catube.dto.VideoDto;
 import com.sparta.catube.dto.VideoRequestDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Time;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "video")

@@ -16,18 +16,18 @@ public class AuthTokensGenerator {
     private final JwtTokenProvider jwtTokenProvider;
 
     public AuthTokens generate(Long memberId) {
-        long now = (new Date()).getTime();
-        Date accessTokenExpiredAt = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        Date refreshTokenExpiredAt = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
-
-        String subject = memberId.toString();
-        String accessToken = jwtTokenProvider.generate(subject, accessTokenExpiredAt);
-        String refreshToken = jwtTokenProvider.generate(subject, refreshTokenExpiredAt);
-
+        String accessToken = generateNewToken(memberId, ACCESS_TOKEN_EXPIRE_TIME);
+        String refreshToken = generateNewToken(memberId, REFRESH_TOKEN_EXPIRE_TIME);
         return AuthTokens.of(accessToken, refreshToken, BEARER_TYPE, ACCESS_TOKEN_EXPIRE_TIME / 1000L);
     }
 
-    public Long extractMemberId(String accessToken) {
-        return Long.valueOf(jwtTokenProvider.parseSubject(accessToken));
+    public String generateAccessToken(Long memberId) {
+        return generateNewToken(memberId, ACCESS_TOKEN_EXPIRE_TIME);
+    }
+
+    public String generateNewToken(Long memberId, long expiredAt) {
+        long now = (new Date()).getTime();
+        Date expiredDate = new Date(now + expiredAt);
+        return jwtTokenProvider.generate(memberId.toString(), expiredDate);
     }
 }

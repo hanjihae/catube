@@ -33,21 +33,17 @@ public class OAuthLoginService {
     }
 
     @Transactional
-    public AuthTokens regenerateAccessToken(Long userId, String providedRefreshToken) {
+    public String regenerateAccessToken(Long userId, String providedRefreshToken) {
         User user = userRepository.findByUserId(userId).orElseThrow();
         String refreshToken = user.getRefreshToken();
         if (refreshToken == null) {
-            throw new RuntimeException("저장된 리프레시 토큰을 찾을 수 없습니다.");
+            throw new RuntimeException("저장된 리프레시 토큰이 존재하지 않습니다.");
         }
         if (providedRefreshToken.equals(refreshToken)) {
             // 리프레시 토큰이 일치하면 새로운 Access 토큰 발급
-            AuthTokens authTokens = authTokensGenerator.generate(user.getUserId());
-            // 새로 발급된 리프레시 토큰도 저장!!
-            String token = "Bearer " + authTokens.getRefreshToken();
-            userRepository.saveUserRefreshToken(userId, token);
-            return authTokens;
+            return authTokensGenerator.generateAccessToken(user.getUserId());
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제공된 리프레시 토큰과 저장된 리프레시 토큰이 일치하지 않습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "유효한 리프리세 토큰이 아닙니다.");
         }
     }
 

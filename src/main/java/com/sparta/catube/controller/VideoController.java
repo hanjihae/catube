@@ -20,75 +20,44 @@ public class VideoController {
     private final VideoService videoService;
 
     @PostMapping("/create")
-    public ResponseEntity<VideoDto> createVideo(@RequestBody VideoRequestDto videoRequestDto) {
-        try {
-            VideoDto videoDto = videoService.createVideo(videoRequestDto);
-            return ResponseEntity.status(HttpStatus.OK).body(videoDto);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<VideoDto> createVideo(@RequestBody VideoRequestDto videoRequestDto) throws Exception {
+        VideoDto videoDto = videoService.createVideo(videoRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<VideoDto>> readMyVideoList() {
-        List<VideoDto> videos = null;
-        try {
-            videos = videoService.readVideoList();
-            return ResponseEntity.status(HttpStatus.OK).body(videos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<List<VideoDto>> readMyVideoList() throws Exception {
+        List<VideoDto> videos = videoService.readVideoList();
+        return ResponseEntity.status(HttpStatus.OK).body(videos);
     }
 
     @PutMapping("/update/{videoId}")
-    public ResponseEntity<VideoDto> updateVideo(@PathVariable Long videoId, @RequestBody VideoRequestDto videoRequestDto) {
-        try {
-            VideoDto videoDto = videoService.updateVideo(videoId, videoRequestDto);
-            return ResponseEntity.status(HttpStatus.OK).body(videoDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<VideoDto> updateVideo(@PathVariable Long videoId, @RequestBody VideoRequestDto videoRequestDto) throws Exception{
+        VideoDto videoDto = videoService.updateVideo(videoId, videoRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
     @DeleteMapping("/delete/{videoId}")
-    public String deleteVideo(@PathVariable Long videoId) {
-        try {
-            videoService.deleteVideo(videoId);
-            return "삭제 완료";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "삭제 실패" + e.getMessage();
-        }
+    public String deleteVideo(@PathVariable Long videoId) throws Exception {
+        videoService.deleteVideo(videoId);
+        return "동영상을 삭제했습니다.";
     }
 
     @GetMapping("/watch/{videoId}")
-    public ResponseEntity<VideoDto> watchVideo(@PathVariable Long videoId) {
-        try {
-            VideoDto videoDto = videoService.watchVideo(videoId);
-            return ResponseEntity.status(HttpStatus.OK).body(videoDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<VideoDto> watchVideo(@PathVariable Long videoId) throws Exception {
+        VideoDto videoDto = videoService.watchVideo(videoId);
+        return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
     @PutMapping("/stop")
     public ResponseEntity<VideoDto> stopVideo(@RequestBody WatchedVideoRequestDto requestDto) throws Exception {
-        try {
-            VideoDto videoDto = videoService.stopVideo(requestDto);
-            return ResponseEntity.status(HttpStatus.OK).body(videoDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        VideoDto videoDto = videoService.stopVideo(requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
     @PostMapping("/register-ad/{videoId}")
-    public String registerAd(@PathVariable Long videoId, @RequestBody List<AdRequestDto> adRequestDto) {
-        try {
-            videoService.insertAdsIntoVideo(videoId, adRequestDto);
-            return "광고 등록 완료";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "광고 등록 실패: " + e.getMessage();
-        }
+    public String registerAd(@PathVariable Long videoId, @RequestBody List<AdRequestDto> adRequestDto) throws Exception {
+        videoService.insertAdsIntoVideo(videoId, adRequestDto);
+        return "광고 등록에 성공했습니다.";
     }
 }

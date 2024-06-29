@@ -1,13 +1,12 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.common.Timestamped;
 import com.sparta.catube.oauth.OAuthProvider;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.swing.text.StyledEditorKit;
 
 @Entity
 @Table(name = "user")

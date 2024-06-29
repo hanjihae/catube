@@ -1,12 +1,10 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.sql.Time;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "views")

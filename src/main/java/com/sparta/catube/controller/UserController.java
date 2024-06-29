@@ -1,12 +1,14 @@
 package com.sparta.catube.controller;
 
-import com.sparta.catube.dto.UserRequestDto;
 import com.sparta.catube.oauth.AuthTokens;
 import com.sparta.catube.oauth.KakaoLoginParams;
 import com.sparta.catube.service.OAuthLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,15 +27,14 @@ public class UserController {
     }
 
     @PostMapping("/re-kakao")
-    public ResponseEntity<AuthTokens> loginAgain(@RequestBody UserRequestDto userRequestDto) {
-        AuthTokens authTokens = oAuthLoginService.regenerateAccessToken(userRequestDto.getUserId(), userRequestDto.getRefreshToken());
-        return ResponseEntity.ok(authTokens);
+    public String loginAgain(@AuthenticationPrincipal UserDetails userDetails, HttpServletRequest req) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        return oAuthLoginService.regenerateAccessToken(userId, req.getHeader("Authorization"));
     }
 
     @PostMapping("/logout")
-    public String logout(@RequestBody UserRequestDto userRequestDto) {
-        oAuthLoginService.logout(userRequestDto.getUserId());
+    public String logout(@AuthenticationPrincipal UserDetails userDetails) {
+        oAuthLoginService.logout(Long.parseLong(userDetails.getUsername()));
         return "로그아웃하셨습니다.";
     }
-
 }

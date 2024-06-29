@@ -1,4 +1,4 @@
-package com.sparta.catube.entity;
+package com.sparta.catube.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
