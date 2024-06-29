@@ -3,15 +3,15 @@ package com.sparta.catube.entity;
 import com.sparta.catube.common.Timestamped;
 import com.sparta.catube.oauth.OAuthProvider;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "user")
-@Data
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Timestamped {
     @Id
@@ -40,12 +40,15 @@ public class User extends Timestamped {
 
     private String refreshToken;
 
-    @Builder
-    public User(String userEmail, String userNickname, String userLoginMethod) {
-        this.userEmail = userEmail;
-        this.userNickname = userNickname;
-        this.userLoginMethod = userLoginMethod;
-        this.userType = "USER";
-        this.userStatus = true;
+    public void saveUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void saveUserPw(String userPw) {
+        this.userPw = userPw;
     }
 }

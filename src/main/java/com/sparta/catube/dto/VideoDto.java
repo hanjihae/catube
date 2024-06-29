@@ -1,12 +1,14 @@
 package com.sparta.catube.dto;
 
+import com.sparta.catube.entity.Video;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class VideoDto {
     private Long videoId;
     private String videoTitle;
@@ -18,4 +20,17 @@ public class VideoDto {
     private long videoLength;
     private Boolean videoDeleteCheck;
     private Boolean videoPublicCheck;
+
+    public VideoDto(Video video) {
+        this.videoId = video.getVideoId();
+        this.videoTitle = video.getVideoTitle();
+        this.videoDescription = video.getVideoDescription();
+        this.videoUrl = video.getVideoUrl();
+        this.adWatchedCount = video.getAdWatchedCount();
+        this.videoTotalViews = video.getVideoTotalViews();
+        this.videoTotalPlaytime = video.getVideoTotalPlaytime();
+        this.videoLength = video.getVideoLength();
+        this.videoDeleteCheck = video.getVideoDeleteCheck();
+        this.videoPublicCheck = video.getVideoPublicCheck();
+    }
 }

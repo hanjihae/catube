@@ -2,16 +2,15 @@ package com.sparta.catube.entity;
 
 import com.sparta.catube.common.Timestamped;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
 @Table(name = "statistics")
-@Data
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Statistics extends Timestamped {
     @Id
@@ -24,7 +23,6 @@ public class Statistics extends Timestamped {
     private Date stPeriodStart;
     private Date stPeriodEnd;
 
-    @ManyToOne
-    @JoinColumn(name = "stVideoId")
-    private Video video;
+    @Column(nullable = false)
+    private Long stVideoId;
 }

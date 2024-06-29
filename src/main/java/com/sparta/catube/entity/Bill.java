@@ -1,15 +1,18 @@
 package com.sparta.catube.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "bill")
-@Data
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Bill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

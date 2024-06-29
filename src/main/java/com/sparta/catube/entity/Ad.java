@@ -1,14 +1,16 @@
 package com.sparta.catube.entity;
 
+import com.sparta.catube.dto.AdRequestDto;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Time;
 
 @Entity
 @Table(name = "ad")
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Ad {
     @Id
@@ -17,4 +19,11 @@ public class Ad {
 
     private String adUrl;
     private long adLength;
+
+    public static Ad createAd(AdRequestDto adDto) {
+        return Ad.builder()
+                .adUrl(adDto.getAdUrl())
+                .adLength(adDto.getAdLength())
+                .build();
+    }
 }

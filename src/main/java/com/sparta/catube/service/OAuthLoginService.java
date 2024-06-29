@@ -53,7 +53,7 @@ public class OAuthLoginService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 리프레시 토큰을 삭제하거나 만료 처리를 수행
-        user.setRefreshToken(null); // 예시로 간단히 삭제 처리
+        user.saveRefreshToken(null); // 예시로 간단히 삭제 처리
         userRepository.save(user); // 변경사항을 데이터베이스에 저장
     }
 

@@ -2,13 +2,13 @@ package com.sparta.catube.entity;
 
 import com.sparta.catube.common.Timestamped;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "views")
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Views extends Timestamped {
@@ -29,13 +29,24 @@ public class Views extends Timestamped {
     private Video video;
 
     public static Views createNewView(User user, Video video, Long authenticatedUserId) {
-        Views view = new Views();
-        view.setUser(user); // 인증된 사용자를 시청기록에 저장
-        view.setVideo(video); // 조회한 동영상 시청기록에 저장
-        view.setViewsCount(!video.getUser().getUserId().equals(authenticatedUserId) ? 1 : 0);
-        view.setViewsLastWatchedTime(0);
-        view.setViewsPlaytime(0);
-        return view;
+        return Views.builder()
+                .user(user)
+                .video(video)
+                .viewsCount(!video.getUser().getUserId().equals(authenticatedUserId) ? 1 : 0)
+                .viewsLastWatchedTime(0)
+                .viewsPlaytime(0)
+                .build();
     }
 
+    public void saveViewsCount(int viewsCount) {
+        this.viewsCount = viewsCount;
+    }
+
+    public void saveViewsLastWatchedTime(long viewsLastWatchedTime) {
+        this.viewsLastWatchedTime = viewsLastWatchedTime;
+    }
+
+    public void saveViewsPlaytime(long viewsPlaytime) {
+        this.viewsPlaytime = viewsPlaytime;
+    }
 }

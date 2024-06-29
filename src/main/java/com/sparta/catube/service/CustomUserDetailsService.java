@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUserId(Long.parseLong(userId))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
         if (user.getUserPw() == null) {
-            user.setUserPw("1111");
+            user.saveUserPw("1111");
         }
         return org.springframework.security.core.userdetails.User.builder()
                 .username(String.valueOf(user.getUserId()))

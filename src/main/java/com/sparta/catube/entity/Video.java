@@ -4,14 +4,14 @@ import com.sparta.catube.common.Timestamped;
 import com.sparta.catube.dto.VideoDto;
 import com.sparta.catube.dto.VideoRequestDto;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "video")
-@Data
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Video extends Timestamped {
     @Id
@@ -42,32 +42,37 @@ public class Video extends Timestamped {
     private User user;
 
     public static Video of(User user, VideoRequestDto videoRequestDto) {
-        Video video = new Video();
-        video.setUser(user);
-        video.setVideoTitle(videoRequestDto.getVideoTitle());
-        video.setVideoDescription(videoRequestDto.getVideoDescription());
-        video.setVideoUrl(videoRequestDto.getVideoUrl());
-        video.setVideoLength(videoRequestDto.getVideoLength());
-        video.setAdWatchedCount(0);
-        video.setVideoTotalViews(0);    // 총 조회수
-        video.setVideoTotalPlaytime(0);   // 총 재생시간 (secounds 단위)
-        video.setVideoDeleteCheck(false);   // 동영상 삭제여부 true: 삭제, false: 삭제안함
-        video.setVideoPublicCheck(true);    // 동영상 공개여부 true: 공개, false: 비공개
-        return video;
+        return Video.builder()
+                .user(user)
+                .videoTitle(videoRequestDto.getVideoTitle())
+                .videoDescription(videoRequestDto.getVideoDescription())
+                .videoUrl(videoRequestDto.getVideoUrl())
+                .videoLength(videoRequestDto.getVideoLength())
+                .adWatchedCount(0)
+                .videoTotalViews(0) // 총 조회수
+                .videoTotalPlaytime(0)  // 총 재생시간 (secounds 단위)
+                .videoDeleteCheck(false)    // 동영상 삭제여부 true: 삭제, false: 삭제안함
+                .videoPublicCheck(true)     // 동영상 공개여부 true: 공개, false: 비공개
+                .build();
     }
 
-    public VideoDto toDto() {
-        return new VideoDto(
-                this.videoId,
-                this.videoTitle,
-                this.videoDescription,
-                this.videoUrl,
-                this.adWatchedCount,
-                this.videoTotalViews,
-                this.videoTotalPlaytime,
-                this.videoLength,
-                this.videoDeleteCheck,
-                this.videoPublicCheck
-        );
+    public void update(VideoRequestDto videoRequestDto) {
+        this.videoTitle = videoRequestDto.getVideoTitle();
+        this.videoDescription = videoRequestDto.getVideoDescription();
+        this.videoUrl = videoRequestDto.getVideoUrl();
+        this.videoLength = videoRequestDto.getVideoLength();
     }
+
+    public void saveVideoTotalViews(int videoTotalViews) {
+        this.videoTotalViews = videoTotalViews;
+    }
+
+    public void saveAdWatchedCount(int adWatchedCount) {
+        this.adWatchedCount = adWatchedCount;
+    }
+
+    public void saveVideoTotalPlaytime(long videoTotalPlaytime) {
+        this.videoTotalPlaytime = videoTotalPlaytime;
+    }
+
 }

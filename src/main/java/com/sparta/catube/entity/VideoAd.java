@@ -1,15 +1,16 @@
 package com.sparta.catube.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.mapping.ToOne;
 
 import java.sql.Time;
 
 @Entity
 @Table(name = "video_ad")
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class VideoAd {
     @Id
@@ -25,4 +26,15 @@ public class VideoAd {
     private Ad ad;
 
     private long vaPosition;
+
+    public static VideoAd createVideoAd(Video video, long vaPosition) {
+        return VideoAd.builder()
+                .video(video)
+                .vaPosition(vaPosition)
+                .build();
+    }
+
+    public void saveAd(Ad ad) {
+        this.ad = ad;
+    }
 }
