@@ -28,7 +28,7 @@ public class Views extends Timestamped {
     @JoinColumn(name = "viewsVideoId")
     private Video video;
 
-    public static Views createNewView(User user, Video video, Long authenticatedUserId) {
+    public static Views of(User user, Video video, Long authenticatedUserId) {
         return Views.builder()
                 .user(user)
                 .video(video)

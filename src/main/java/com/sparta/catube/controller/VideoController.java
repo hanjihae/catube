@@ -3,9 +3,9 @@ package com.sparta.catube.controller;
 import com.sparta.catube.dto.AdRequestDto;
 import com.sparta.catube.dto.VideoDto;
 import com.sparta.catube.dto.VideoRequestDto;
-import com.sparta.catube.dto.WatchedVideoRequestDto;
 import com.sparta.catube.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("/video")
 public class VideoController {
 
+    @Autowired
     private final VideoService videoService;
 
     @PostMapping("/create")
@@ -49,9 +50,9 @@ public class VideoController {
         return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 
-    @PutMapping("/stop")
-    public ResponseEntity<VideoDto> stopVideo(@RequestBody WatchedVideoRequestDto requestDto) throws Exception {
-        VideoDto videoDto = videoService.stopVideo(requestDto);
+    @PutMapping("/stop/{videoId}")
+    public ResponseEntity<VideoDto> stopVideo(@PathVariable Long videoId, @RequestBody long lastWatchedTime) throws Exception {
+        VideoDto videoDto = videoService.stopVideo(videoId, lastWatchedTime);
         return ResponseEntity.status(HttpStatus.OK).body(videoDto);
     }
 

@@ -19,11 +19,17 @@ public class Ad {
 
     private String adUrl;
     private long adLength;
+    private int adWatchedCount;
 
-    public static Ad createAd(AdRequestDto adDto) {
+    public static Ad of(AdRequestDto adDto) {
         return Ad.builder()
                 .adUrl(adDto.getAdUrl())
                 .adLength(adDto.getAdLength())
+                .adWatchedCount(0)
                 .build();
+    }
+
+    public void saveAdWatchedCount(int adWatchedCount) {
+        this.adWatchedCount = adWatchedCount;
     }
 }

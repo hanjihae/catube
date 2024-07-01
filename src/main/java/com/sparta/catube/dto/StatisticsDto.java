@@ -1,17 +1,21 @@
 package com.sparta.catube.dto;
 
+import com.sparta.catube.entity.Statistics;
 import lombok.Data;
-
-import java.sql.Date;
-import java.sql.Timestamp;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class StatisticsDto {
-    private Long stId;
     private String stType;
     private String stPeriod;
-    private int stValue;
-    private Date stPeriodStart;
-    private Date stPeriodEnd;
-    private Long stVideoId;
+    private String stVideoTitle;
+    private String stValue;
+
+    public StatisticsDto(Statistics statistics) {
+        this.stType = statistics.getStType();
+        this.stPeriod = statistics.getStPeriod();
+        this.stVideoTitle = statistics.getStVideoTitle();
+        this.stValue = statistics.getStValue();
+    }
 }

@@ -27,7 +27,7 @@ public class OAuthLoginService {
 
         // AuthTokens 객체에 포함된 refreshToken을 userRepository를 통해 저장
         String refreshToken = "Bearer " + authTokens.getRefreshToken();
-        userRepository.saveUserRefreshToken(userId, refreshToken);
+        userRepository.updateUserRefreshToken(userId, refreshToken);
 
         return authTokens;
     }
@@ -69,6 +69,7 @@ public class OAuthLoginService {
         User user = User.builder()
                 .userEmail(oAuthInfoResponse.getEmail())
                 .userNickname(oAuthInfoResponse.getNickname())
+                .userType("USER")
                 .userLoginMethod(oAuthInfoResponse.getOAuthProvider().toString())
                 .build();
         return userRepository.save(user).getUserId();

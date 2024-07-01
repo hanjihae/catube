@@ -26,7 +26,6 @@ public class VideoDto {
         this.videoTitle = video.getVideoTitle();
         this.videoDescription = video.getVideoDescription();
         this.videoUrl = video.getVideoUrl();
-        this.adWatchedCount = video.getAdWatchedCount();
         this.videoTotalViews = video.getVideoTotalViews();
         this.videoTotalPlaytime = video.getVideoTotalPlaytime();
         this.videoLength = video.getVideoLength();

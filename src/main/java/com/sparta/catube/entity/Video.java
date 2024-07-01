@@ -26,7 +26,6 @@ public class Video extends Timestamped {
     @Column(nullable = false)
     private String videoUrl;
 
-    private int adWatchedCount;
     private int videoTotalViews;
     private long videoTotalPlaytime;
     private long videoLength;
@@ -48,7 +47,6 @@ public class Video extends Timestamped {
                 .videoDescription(videoRequestDto.getVideoDescription())
                 .videoUrl(videoRequestDto.getVideoUrl())
                 .videoLength(videoRequestDto.getVideoLength())
-                .adWatchedCount(0)
                 .videoTotalViews(0) // 총 조회수
                 .videoTotalPlaytime(0)  // 총 재생시간 (secounds 단위)
                 .videoDeleteCheck(false)    // 동영상 삭제여부 true: 삭제, false: 삭제안함
@@ -65,10 +63,6 @@ public class Video extends Timestamped {
 
     public void saveVideoTotalViews(int videoTotalViews) {
         this.videoTotalViews = videoTotalViews;
-    }
-
-    public void saveAdWatchedCount(int adWatchedCount) {
-        this.adWatchedCount = adWatchedCount;
     }
 
     public void saveVideoTotalPlaytime(long videoTotalPlaytime) {
