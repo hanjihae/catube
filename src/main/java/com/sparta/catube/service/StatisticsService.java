@@ -23,13 +23,14 @@ public class StatisticsService {
     private StatisticsRepository statisticsRepository;
     @Autowired
     private VideoRepository videoRepository;
+    private List<StatisticsDto> batchResults = new ArrayList<>();
 
     LocalDate today = LocalDate.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public String getCurrentWeekRange() {
         LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
-        LocalDate endOfWeek = today.plusDays(7-today.getDayOfWeek().getValue());
+        LocalDate endOfWeek = today.plusDays(7 - today.getDayOfWeek().getValue());
 
         String startOfWeekFormatted = startOfWeek.format(formatter);
         String endOfWeekFormatted = endOfWeek.format(formatter);
@@ -46,161 +47,53 @@ public class StatisticsService {
         return startOfMonthFormatted + " - " + endOfMonthFormatted;
     }
 
+    public String getToday() {
+        return today.format(formatter);
+    }
+
     public String formatVideoTotalViews(int videoTotalViews) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(videoTotalViews)+"회";
+        return numberFormat.format(videoTotalViews) + "회";
     }
 
     public String formatVideoTotalPlayTime(long videoTotalPlayTime) {
         long hours = videoTotalPlayTime / 3600;
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return numberFormat.format(hours)+"시간";
+        return numberFormat.format(hours) + "시간";
     }
 
-    // 1일 조회수 TOP5
-    public List<StatisticsDto> videoTotalViewsTop5OfToday() throws Exception {
-        List<Video> videosOfToday = videoRepository.findTop5ByTotalViewsToday();
-        String getToday = today.format(formatter);
-        if (videosOfToday.isEmpty()) {
-            throw new Exception("오늘 업로드된 동영상이 없습니다.");
-        }
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfToday.size(); i++) {
-            Video video = videosOfToday.get(i);
-            Statistics statisticsOfToday = Statistics.of(
-                    "조회수",
-                    "TODAY",
-                    getToday,
-                    video.getVideoTitle(),
-                    formatVideoTotalViews(video.getVideoTotalViews()),
-                    video.getVideoId()
-            );
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfToday);
-            statisticsDtos.add(statisticsDto);
-        };
-        return statisticsDtos;
+    public List<Video> findTop5ByTotalViewsToday() {
+        return videoRepository.findTop5ByTotalViewsToday();
     }
 
-    // 1주일 조회수 TOP5
-    public List<StatisticsDto> videoTotalViewsTop5OfWeek() throws Exception {
-        List<Video> videosOfWeek = videoRepository.findTop5ByTotalViewsThisWeek();
-        if (videosOfWeek.isEmpty()) {
-            throw new Exception("이번 주 업로드된 동영상이 없습니다.");
-        }
-        List<Statistics> listForSave = new ArrayList<>();
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfWeek.size(); i++) {
-            Video video = videosOfWeek.get(i);
-            Statistics statisticsOfWeek = Statistics.of(
-                    "조회수",
-                    "WEEK",
-                    getCurrentWeekRange(),
-                    video.getVideoTitle(),
-                    formatVideoTotalViews(video.getVideoTotalViews()),
-                    video.getVideoId()
-            );
-            listForSave.add(statisticsOfWeek);
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfWeek);
-            statisticsDtos.add(statisticsDto);
-        }
-        statisticsRepository.saveAll(listForSave);
-        return statisticsDtos;
+    public List<Video> findTop5ByTotalViewsThisWeek() {
+        return videoRepository.findTop5ByTotalViewsThisWeek();
     }
 
-    // 1달 조회수 TOP5
-    public List<StatisticsDto> videoTotalViewsTop5OfMonth() throws Exception {
-        List<Video> videosOfMonth = videoRepository.findTop5ByTotalViewsThisMonth();
-        if (videosOfMonth.isEmpty()) {
-            throw new Exception("이번 달 업로드된 동영상이 없습니다.");
-        }
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfMonth.size(); i++) {
-            Video video = videosOfMonth.get(i);
-            Statistics statisticsOfMonth = Statistics.of(
-                    "조회수",
-                    "MONTH",
-                    getCurrentMonthRange(),
-                    video.getVideoTitle(),
-                    formatVideoTotalViews(video.getVideoTotalViews()),
-                    video.getVideoId()
-            );
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfMonth);
-            statisticsDtos.add(statisticsDto);
-        }
-        return statisticsDtos;
+    public List<Video> findTop5ByTotalViewsThisMonth() {
+        return videoRepository.findTop5ByTotalViewsThisMonth();
     }
 
-    public List<StatisticsDto> videoTotalPlaytimeTop5OfToday() throws Exception {
-        // 1일 재생시간 TOP5
-        List<Video> videosOfToday = videoRepository.findTop5ByTotalPlayTimeToday();
-        String getToday = LocalDate.now().format(formatter);
-        if (videosOfToday.isEmpty()) {
-            throw new Exception("오늘 업로드된 동영상이 없습니다.");
+    public StatisticsDto createStatisticsDto(Video video, String type, String period, String dateRange) {
+        String value;
+        if (type.equals("조회수")) {
+            value = formatVideoTotalViews(video.getVideoTotalViews());
+        } else {
+            value = formatVideoTotalPlayTime(video.getVideoTotalPlaytime());
         }
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfToday.size(); i++) {
-            Video video = videosOfToday.get(i);
-            Statistics statisticsOfToday = Statistics.of(
-                    "재생시간",
-                    "TODAY",
-                    getToday,
-                    video.getVideoTitle(),
-                    formatVideoTotalPlayTime(video.getVideoTotalPlaytime()),
-                    video.getVideoId()
-            );
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfToday);
-            statisticsDtos.add(statisticsDto);
-        }
-        return statisticsDtos;
+        Statistics statistics = Statistics.of(type, period, dateRange, video.getVideoTitle(), value, video.getVideoId());
+        return new StatisticsDto(statistics);
     }
 
-    // 1주일 조회수 TOP5
-    public List<StatisticsDto> videoTotalPlayTimeTop5OfWeek() throws Exception {
-        List<Video> videosOfWeek = videoRepository.findTop5ByTotalPlayTimeThisWeek();
-        if (videosOfWeek.isEmpty()) {
-            throw new Exception("이번 주 업로드된 동영상이 없습니다.");
-        }
-        List<Statistics> listForSave = new ArrayList<>();
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfWeek.size(); i++) {
-            Video video = videosOfWeek.get(i);
-            Statistics statisticsOfWeek = Statistics.of(
-                    "재생시간",
-                    "WEEK",
-                    getCurrentWeekRange(),
-                    video.getVideoTitle(),
-                    formatVideoTotalPlayTime(video.getVideoTotalPlaytime()),
-                    video.getVideoId()
-            );
-            listForSave.add(statisticsOfWeek);
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfWeek);
-            statisticsDtos.add(statisticsDto);
-        }
-        statisticsRepository.saveAll(listForSave);
-        return statisticsDtos;
+    public void addBatchResult(StatisticsDto statisticsDto) {
+        batchResults.add(statisticsDto);
     }
 
-    // 1달 조회수 TOP5
-    public List<StatisticsDto> videoTotalPlayTimeTop5OfMonth() throws Exception {
-        List<Video> videosOfMonth = videoRepository.findTop5ByTotalPlayTimeThisMonth();
-        if (videosOfMonth.isEmpty()) {
-            throw new Exception("이번 달 업로드된 동영상이 없습니다.");
-        }
-        List<StatisticsDto> statisticsDtos = new ArrayList<>();
-        for (int i = 0; i < videosOfMonth.size(); i++) {
-            Video video = videosOfMonth.get(i);
-            Statistics statisticsOfMonth = Statistics.of(
-                    "재생시간",
-                    "MONTH",
-                    getCurrentMonthRange(),
-                    video.getVideoTitle(),
-                    formatVideoTotalPlayTime(video.getVideoTotalPlaytime()),
-                    video.getVideoId()
-            );
-            StatisticsDto statisticsDto = new StatisticsDto(statisticsOfMonth);
-            statisticsDtos.add(statisticsDto);
-        }
-        return statisticsDtos;
+    public List<StatisticsDto> getBatchResults() {
+        return new ArrayList<>(batchResults);
     }
 
+    public void clearBatchResults() {
+        batchResults.clear();
+    }
 }

@@ -34,4 +34,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     // 1달 동안 총 재생시간이 높은 동영상 TOP 5
     @Query(value = "SELECT * FROM video WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL DAYOFMONTH(CURDATE())-1 DAY) AND DATE(created_at) < DATE_ADD(DATE_SUB(CURDATE(), INTERVAL DAYOFMONTH(CURDATE())-1 DAY), INTERVAL 1 MONTH) ORDER BY video_total_playtime DESC LIMIT 5", nativeQuery = true)
     List<Video> findTop5ByTotalPlayTimeThisMonth();
+
+    
 }

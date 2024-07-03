@@ -2,7 +2,7 @@ package com.sparta.catube.controller;
 
 import com.sparta.catube.oauth.AuthTokens;
 import com.sparta.catube.oauth.KakaoLoginParams;
-import com.sparta.catube.service.OAuthLoginService;
+import com.sparta.catube.oauth.OAuthLoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

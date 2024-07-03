@@ -6,11 +6,13 @@ import com.sparta.catube.dto.VideoRequestDto;
 import com.sparta.catube.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +31,9 @@ public class VideoController {
     @GetMapping("/mine")
     public ResponseEntity<List<VideoDto>> readMyVideoList() throws Exception {
         List<VideoDto> videos = videoService.readVideoList();
-        return ResponseEntity.status(HttpStatus.OK).body(videos);
+        return ResponseEntity.status(HttpStatus.OK)
+                .cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
+                .body(videos);
     }
 
     @PutMapping("/update/{videoId}")

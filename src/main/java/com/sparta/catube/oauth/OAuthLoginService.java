@@ -1,7 +1,6 @@
-package com.sparta.catube.service;
+package com.sparta.catube.oauth;
 
 import com.sparta.catube.entity.User;
-import com.sparta.catube.oauth.*;
 import com.sparta.catube.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
