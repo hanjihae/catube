@@ -2,9 +2,13 @@ package com.sparta.catube.entity;
 
 import com.sparta.catube.dto.AdRequestDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.sql.Time;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ad")
@@ -17,16 +21,35 @@ public class Ad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adId;
 
-    private String adUrl;
-    private long adLength;
+    private long vaPosition;
     private int adWatchedCount;
 
-    public static Ad of(AdRequestDto adDto) {
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "adsListId")
+    private AdsList adsList;
+
+    @OneToOne(mappedBy = "ad")
+    private VideoAd videoAd;
+
+    public static Ad of(AdsList adsList, long vaPosition) {
         return Ad.builder()
-                .adUrl(adDto.getAdUrl())
-                .adLength(adDto.getAdLength())
+                .adsList(adsList)
+                .vaPosition(vaPosition)
                 .adWatchedCount(0)
                 .build();
+    }
+
+    public void saveVideoAd(VideoAd videoAd) {
+        this.videoAd = videoAd;
     }
 
     public void saveAdWatchedCount(int adWatchedCount) {

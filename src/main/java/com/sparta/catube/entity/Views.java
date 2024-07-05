@@ -3,6 +3,9 @@ package com.sparta.catube.entity;
 import com.sparta.catube.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "views")
@@ -11,14 +14,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class Views extends Timestamped {
+public class Views {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long viewsId;
 
-    private int viewsCount;
     private long viewsLastWatchedTime;
-    private long viewsPlaytime;
+    private long viewsPlayTime;
 
     @ManyToOne
     @JoinColumn(name = "viewsUserId")
@@ -28,25 +30,29 @@ public class Views extends Timestamped {
     @JoinColumn(name = "viewsVideoId")
     private Video video;
 
-    public static Views of(User user, Video video, Long authenticatedUserId) {
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public static Views of(User user, Video video) {
         return Views.builder()
                 .user(user)
                 .video(video)
-                .viewsCount(!video.getUser().getUserId().equals(authenticatedUserId) ? 1 : 0)
                 .viewsLastWatchedTime(0)
-                .viewsPlaytime(0)
+                .viewsPlayTime(0)
                 .build();
-    }
-
-    public void saveViewsCount(int viewsCount) {
-        this.viewsCount = viewsCount;
     }
 
     public void saveViewsLastWatchedTime(long viewsLastWatchedTime) {
         this.viewsLastWatchedTime = viewsLastWatchedTime;
     }
 
-    public void saveViewsPlaytime(long viewsPlaytime) {
-        this.viewsPlaytime = viewsPlaytime;
+    public void saveViewsPlaytime(long viewsPlayTime) {
+        this.viewsPlayTime = viewsPlayTime;
     }
 }

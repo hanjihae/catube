@@ -1,6 +1,5 @@
 package com.sparta.catube.controller;
 
-import com.sparta.catube.dto.AdRequestDto;
 import com.sparta.catube.dto.VideoDto;
 import com.sparta.catube.dto.VideoRequestDto;
 import com.sparta.catube.service.VideoService;
@@ -48,7 +47,7 @@ public class VideoController {
         return "동영상을 삭제했습니다.";
     }
 
-    @GetMapping("/watch/{videoId}")
+    @PostMapping("/watch/{videoId}")
     public ResponseEntity<VideoDto> watchVideo(@PathVariable Long videoId) throws Exception {
         VideoDto videoDto = videoService.watchVideo(videoId);
         return ResponseEntity.status(HttpStatus.OK).body(videoDto);
@@ -58,11 +57,5 @@ public class VideoController {
     public ResponseEntity<VideoDto> stopVideo(@PathVariable Long videoId, @RequestBody long lastWatchedTime) throws Exception {
         VideoDto videoDto = videoService.stopVideo(videoId, lastWatchedTime);
         return ResponseEntity.status(HttpStatus.OK).body(videoDto);
-    }
-
-    @PostMapping("/register-ad/{videoId}")
-    public String registerAd(@PathVariable Long videoId, @RequestBody List<AdRequestDto> adRequestDto) throws Exception {
-        videoService.insertAdsIntoVideo(videoId, adRequestDto);
-        return "광고 등록에 성공했습니다.";
     }
 }

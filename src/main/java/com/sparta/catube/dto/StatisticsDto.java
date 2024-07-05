@@ -12,10 +12,10 @@ public class StatisticsDto {
     private String stVideoTitle;
     private String stValue;
 
-    public StatisticsDto(Statistics statistics) {
-        this.stType = statistics.getStType();
-        this.stPeriod = statistics.getStPeriod();
-        this.stVideoTitle = statistics.getStVideoTitle();
-        this.stValue = statistics.getStValue();
-    }
+//    public StatisticsDto(Statistics statistics) {
+//        this.stType = statistics.getStType();
+//        this.stPeriod = statistics.getStPeriod();
+//        this.stVideoTitle = statistics.getStVideoTitle();
+//        this.stValue = statistics.getStValue();
+//    }
 }

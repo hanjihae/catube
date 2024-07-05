@@ -14,7 +14,6 @@ public class VideoDto {
     private String videoTitle;
     private String videoDescription;
     private String videoUrl;
-    private int adWatchedCount;
     private int videoTotalViews;
     private long videoTotalPlaytime;
     private long videoLength;
