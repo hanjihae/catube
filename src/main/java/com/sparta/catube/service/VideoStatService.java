@@ -40,15 +40,16 @@ public class VideoStatService {
 
     // 1일치 조회수, 재생시간 저장
     public void saveDailyStat() throws Exception {
-        User user = getAuthenticatedUser();
+//        User user = getAuthenticatedUser();
         LocalDate today = LocalDate.now();
 
-        List<Object[]> dailyStats = viewsRepository.countViewsByVideoExcludingUserGroupByVideo(user);
+//        List<Object[]> dailyStats = viewsRepository.countViewsByVideoExcludingUserGroupByVideo(user, today);
+        List<Object[]> dailyStats = viewsRepository.countViewsByVideoExcludingUserGroupByVideo(today);
         List<VideoStat> vsToSave = new ArrayList<>();
         for (Object[] vs : dailyStats) {
             Video video = (Video)vs[0];
-            int viewCount = ((Long)vs[1]).intValue();
-            long playTime = (long)vs[2];
+            int viewCount = video.getVideoTotalViews() + ((Number)vs[1]).intValue();
+            long playTime = video.getVideoTotalPlaytime() + (long)vs[2];
             VideoStat videoStat = VideoStat.of(video, viewCount, playTime);
             vsToSave.add(videoStat);
         }
@@ -62,7 +63,7 @@ public class VideoStatService {
         List<Object[]> dailyStats = videoStatRepository.findTodayVideoViewCount(today);
         for (Object[] vs : dailyStats) {
             Video video = (Video)vs[0];
-            int viewCount = ((Long)vs[1]).intValue();
+            int viewCount = ((Number)vs[1]).intValue();
             dailyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, today, today));
         }
         return dailyStatList;
@@ -91,7 +92,7 @@ public class VideoStatService {
         List<Object[]> weeklyStats = videoStatRepository.findVideoViewCount(startOfWeek, endOfWeek);
         for (Object[] vs : weeklyStats) {
             Video video = (Video)vs[0];
-            int viewCount = ((Long)vs[1]).intValue();
+            int viewCount = ((Number)vs[1]).intValue();
             weeklyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, startOfWeek, endOfWeek));
         }
         return weeklyStatList;
@@ -123,7 +124,7 @@ public class VideoStatService {
         List<Object[]> monthlyStats = videoStatRepository.findVideoViewCount(startOfMonth, endOfMonth);
         for (Object[] vs : monthlyStats) {
             Video video = (Video)vs[0];
-            int viewCount = ((Long)vs[1]).intValue();
+            int viewCount = ((Number)vs[1]).intValue();
             monthlyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, startOfMonth, endOfMonth));
         }
         return monthlyStatList;

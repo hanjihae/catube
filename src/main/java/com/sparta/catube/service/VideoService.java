@@ -153,11 +153,11 @@ public class VideoService {
                 Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
                 if (recentViewsOptional.isPresent()) {  // 이전 시청기록이 있다면
                     Views recentViews = recentViewsOptional.get();
-//                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
+                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
                         // 시청기록 생성
                         Views views = Views.of(user, video);
                         viewsRepository.save(views);
-//                    }
+                    }
                 } else {    // 이전 시청기록이 없다면
                     // 시청기록 생성
                     Views views = Views.of(user, video);
@@ -211,7 +211,7 @@ public class VideoService {
             // 마지막 재생시간 갱신
             views.saveViewsLastWatchedTime(lastWatchedTime);
         }
-        long totalPlayTimeOfVideo = video.getVideoTotalPlaytime() + playTime;
+//        long totalPlayTimeOfVideo = video.getVideoTotalPlaytime() + playTime;
         // 마지막 재생시점 저장
         views.saveViewsPlaytime(playTime);
         viewsRepository.save(views);
@@ -220,8 +220,8 @@ public class VideoService {
 //                if (previousViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
                     adViewsRepository.saveAll(adViewsToSave);   // 광고 시청기록 생성
                     videoAdRepository.saveAll(vasToSave);   // 각 광고 누적조회수 갱신
-                    video.saveVideoTotalPlaytime(totalPlayTimeOfVideo); // 해당 동영상의 총 재생시간 갱신
-                    videoRepository.save(video);
+//                    video.saveVideoTotalPlaytime(totalPlayTimeOfVideo); // 해당 동영상의 총 재생시간 갱신
+//                    videoRepository.save(video);
 //                }
 //            }
             return new VideoDto(video);

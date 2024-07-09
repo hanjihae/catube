@@ -14,19 +14,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@IdClass(AdStatId.class)
 public class AdStat {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "video_ad_id")
     private VideoAd videoAd;
 
-    @Id
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDate createdAt;
