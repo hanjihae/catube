@@ -32,7 +32,7 @@ services:
 
   web:
     container_name: web
-    image: hanjihae/second-eyes-web
+    image: hanjihae/second-eyes-web:new
     expose:
       - 8080
     ports:

@@ -1,7 +1,8 @@
 package com.sparta.catube.service;
 
 import com.sparta.catube.common.ErrorMessage;
-import com.sparta.catube.dto.*;
+import com.sparta.catube.dto.VideoDto;
+import com.sparta.catube.dto.VideoRequestDto;
 import com.sparta.catube.entity.*;
 import com.sparta.catube.repository.*;
 import jakarta.transaction.Transactional;
@@ -26,8 +27,8 @@ public class VideoService {
     private final UserRepository userRepository;
     private final ViewsRepository viewsRepository;
     private final VideoAdRepository videoAdRepository;
+    private final AdViewsRepository adViewsRepository;
     private final AdRepository adRepository;
-    private final AdsListRepository adsListRepository;
 
     private User getAuthenticatedUser() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -66,9 +67,8 @@ public class VideoService {
     public void insertAdsIntoVideo(Long videoId) throws Exception {
         Video video = getVideo(videoId);
         try {
-            List<AdsList> adsList = adsListRepository.findAll();    // 광고리스트 모두 가져오기
-            List<VideoAd> vasToSave = new ArrayList<>();    // video - ad 중간테이블
-            List<Ad> adsToSave = new ArrayList<>();  // 광고 - 광고 조회수/ 광고 위치 포함
+            List<Ad> ads = adRepository.findAll();
+            List<VideoAd> vaListToSave = new ArrayList<>();
             // 광고 개수 = 동영상 길이 / 5분
             int cnt = (int) video.getVideoLength() / (5 * 60);
             int adCount = (int) video.getVideoLength() % (5 * 60) == 0 ?  cnt - 1 : cnt;
@@ -77,17 +77,12 @@ public class VideoService {
             }
             Random random = new Random();
             for (int i=1; i <= adCount; i++) {
-                long position = i * (5 * 60);   // 광고 삽입 위치
-                int randomAdIndex = random.nextInt(adsList.size()); // 광고정보리스트에서 꺼내올 광고정보의 인덱스
-                AdsList ads = adsList.get(randomAdIndex);   // 랜덤으로 꺼내온 광고정보
-                Ad ad = Ad.of(ads, position);   // 광고에 광고정보와 광고삽입위치 넣어 광고 생성
-                VideoAd videoAd = VideoAd.of(video, ad);    // 만들어진 ad, video-ad에 넣기
-                ad.saveVideoAd(videoAd);    // va 정보 ad에도 넣기
-                adsToSave.add(ad);
-                vasToSave.add(videoAd);
+                int index = random.nextInt(adCount);
+                Ad ad = ads.get(index);
+                VideoAd videoAd = VideoAd.of(video, ad);
+                vaListToSave.add(videoAd);
             }
-            adRepository.saveAll(adsToSave);
-            videoAdRepository.saveAll(vasToSave);
+            videoAdRepository.saveAll(vaListToSave);
         } catch (Exception e) {
             throw new Exception(ErrorMessage.FAILED_REGISTER_AD.getMessage());
         }
@@ -133,13 +128,11 @@ public class VideoService {
         try {
             // 동영상에 연결된 광고들 삭제
             List<VideoAd> vas = videoAdRepository.findByVideo(video);
-            List<Ad> ads = new ArrayList<>();
             for (VideoAd va : vas) {
-                Ad ad = adRepository.findByVideoAd(va);
-                ads.add(ad);
+                List<AdViews> adViews = adViewsRepository.findByVideoAd(va);
+                adViewsRepository.deleteAll(adViews);
             }
             videoAdRepository.deleteAll(vas);
-            adRepository.deleteAll(ads);
             List<Views> viewsList = viewsRepository.findByVideo(video);
             viewsRepository.deleteAll(viewsList);
             videoRepository.delete(video); // 동영상 삭제
@@ -153,25 +146,24 @@ public class VideoService {
         Video video = getVideo(videoId);
         User user = getAuthenticatedUser();
         try {
-            // 시청기록 생성
-            Views views = Views.of(user, video);
-            viewsRepository.save(views);
-            // 본인이 본인 동영상을 보면 조회수 카운트 X
+            // 본인이 본인 동영상을 보면 조회수 카운트 X - 누적조회수는 배치 돌리고 나서 시청기록 세서 한꺼번에 플러스
             // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
-            if (!video.getUser().getUserId().equals(user.getUserId())) {
+//            if (!video.getUser().getUserId().equals(user.getUserId())) {
                 // 해당 동영상에 대한 개인의 시청기록 생성일자가 현재 시간보다 30초 이후일 때 +1 카운트
                 Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
                 if (recentViewsOptional.isPresent()) {  // 이전 시청기록이 있다면
                     Views recentViews = recentViewsOptional.get();
-                    if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
-                        video.saveVideoTotalViews(video.getVideoTotalViews() + 1);
-                        videoRepository.save(video);
-                    }
+//                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
+                        // 시청기록 생성
+                        Views views = Views.of(user, video);
+                        viewsRepository.save(views);
+//                    }
                 } else {    // 이전 시청기록이 없다면
-                    video.saveVideoTotalViews(video.getVideoTotalViews() + 1);
-                    videoRepository.save(video);
+                    // 시청기록 생성
+                    Views views = Views.of(user, video);
+                    viewsRepository.save(views);
                 }
-            }
+//            }
             return new VideoDto(video);
         } catch (Exception e) {
             throw new Exception(ErrorMessage.FAILED_WATCH_VIDEO.getMessage());
@@ -193,27 +185,29 @@ public class VideoService {
         }
         // 심어놓은 광고 리스트 조회
         List<VideoAd> vas = videoAdRepository.findByVideo(video);
-        List<Ad> adsToSave = new ArrayList<>();
-        for (VideoAd va : vas) {
-            // video에 해당되는 VideoAd에 저장된 adId로 ad 가져옴
-            Ad ad = adRepository.findByVideoAd(va);
+        List<VideoAd> vasToSave = new ArrayList<>();
+        List<AdViews> adViewsToSave = new ArrayList<>();
+        for (int i = 1; i <= vas.size(); i++) {
+            VideoAd va = vas.get(i-1);
+            int position = i * (60 * 5);
             // 저장된 마지막 재생시점보다 크고, 전송된 마지막 재생시점보다 작은 경우 카운트
-            if (ad.getVaPosition() > previousViews.getViewsLastWatchedTime() && ad.getVaPosition() <= lastWatchedTime) {
-                ad.saveAdWatchedCount(ad.getAdWatchedCount() + 1);
-                adsToSave.add(ad);
+            if (position > previousViews.getViewsLastWatchedTime() && position <= lastWatchedTime) {
+                AdViews adViews = AdViews.of(va, va.getAd());   // 광고 시청기록 생성 - 배치할 때 va.getAdWatchedCount에 한꺼번에 조회수 저장
+                adViewsToSave.add(adViews);
             }
         }
         // 동영상 시청 시간
         long playTime = 0;
+        long previousLastWatchedTime = previousViews.getViewsLastWatchedTime();
         // 마지막 재생시점이 동영상 길이보다 길다면
         if (lastWatchedTime >= video.getVideoLength()) {
             // 동영상 시청 시간 = 동영상 길이 - 저장되었던 재생시점
-            playTime = video.getVideoLength() - previousViews.getViewsLastWatchedTime();
+            playTime = video.getVideoLength() - previousLastWatchedTime;
             // 처음부터 재생되도록 마지막 재생시점 0 저장
             views.saveViewsLastWatchedTime(0);
         } else {
             // 동영상 시청 시간 = 현 재생시점 - 저장되었던 재생시점
-            playTime = lastWatchedTime - previousViews.getViewsLastWatchedTime();
+            playTime = lastWatchedTime - previousLastWatchedTime;
             // 마지막 재생시간 갱신
             views.saveViewsLastWatchedTime(lastWatchedTime);
         }
@@ -222,13 +216,14 @@ public class VideoService {
         views.saveViewsPlaytime(playTime);
         viewsRepository.save(views);
         try {
-            if (!video.getUser().getUserId().equals(user.getUserId())) {
-                if (previousViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
-                    adRepository.saveAll(adsToSave);
+//            if (!video.getUser().getUserId().equals(user.getUserId())) {
+//                if (previousViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
+                    adViewsRepository.saveAll(adViewsToSave);   // 광고 시청기록 생성
+                    videoAdRepository.saveAll(vasToSave);   // 각 광고 누적조회수 갱신
                     video.saveVideoTotalPlaytime(totalPlayTimeOfVideo); // 해당 동영상의 총 재생시간 갱신
                     videoRepository.save(video);
-                }
-            }
+//                }
+//            }
             return new VideoDto(video);
         } catch (Exception e) {
             throw new Exception(ErrorMessage.FAILED_STOP_VIDEO.getMessage());

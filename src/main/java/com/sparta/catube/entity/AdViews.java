@@ -11,26 +11,33 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "ad")
+@Table(name = "ad_views")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ad {
+public class AdViews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long adId;
+    private Long adViewsId;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "video_ad_id")
+    private VideoAd videoAd;
+
+    @ManyToOne
+    @JoinColumn(name = "ad_id")
+    private Ad ad;
+
+    public static AdViews of(VideoAd videoAd, Ad ad) {
+        return AdViews.builder()
+                .createdAt(LocalDateTime.now())
+                .videoAd(videoAd)
+                .ad(ad)
+                .build();
     }
-
-    @OneToMany(mappedBy = "ad")
-    private List<AdViews> adViews;
-
 }

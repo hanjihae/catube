@@ -34,15 +34,11 @@ public class Views {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
     public static Views of(User user, Video video) {
         return Views.builder()
                 .user(user)
                 .video(video)
+                .createdAt(LocalDateTime.now())
                 .viewsLastWatchedTime(0)
                 .viewsPlayTime(0)
                 .build();

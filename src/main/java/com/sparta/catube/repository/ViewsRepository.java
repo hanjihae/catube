@@ -4,11 +4,9 @@ import com.sparta.catube.entity.User;
 import com.sparta.catube.entity.Video;
 import com.sparta.catube.entity.Views;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +22,8 @@ public interface ViewsRepository extends JpaRepository<Views, Long> {
 
     List<Views> findByVideo(Video video);
 
-//    @Modifying
-//    @Transactional
-//    @Query("DELETE FROM Views v WHERE v.video = :video")
-//    void deleteByVideo(Video video);
+//    @Query("SELECT v.video, COUNT(v), SUM(v.viewsPlayTime) FROM Views v WHERE v.user <> :user GROUP BY v.video")
+    @Query("SELECT v.video, COUNT(v), SUM(v.viewsPlayTime) FROM Views v GROUP BY v.video")
+    List<Object[]> countViewsByVideoExcludingUserGroupByVideo(@Param("user") User user);
+
 }

@@ -6,6 +6,8 @@ import com.sparta.catube.dto.VideoRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "video")
 @Getter
@@ -36,9 +38,17 @@ public class Video extends Timestamped {
     @Column(nullable = false)
     private Boolean videoPublicCheck;
 
+    private Boolean billOrNot;
+
     @ManyToOne
     @JoinColumn(name = "videoUserId")
     private User user;
+
+    @OneToMany(mappedBy = "video")
+    private List<VideoBill> videoBills;
+
+    @OneToMany(mappedBy = "video")
+    private List<VideoStat> videoStats;
 
     public static Video of(User user, VideoRequestDto videoRequestDto) {
         return Video.builder()
@@ -51,6 +61,7 @@ public class Video extends Timestamped {
                 .videoTotalPlaytime(0)  // 총 재생시간 (secounds 단위)
                 .videoDeleteCheck(false)    // 동영상 삭제여부 true: 삭제, false: 삭제안함
                 .videoPublicCheck(true)     // 동영상 공개여부 true: 공개, false: 비공개
+                .billOrNot(false) // 정산 여부
                 .build();
     }
 
