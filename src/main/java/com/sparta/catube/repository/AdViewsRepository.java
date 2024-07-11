@@ -17,8 +17,8 @@ public interface AdViewsRepository extends JpaRepository<AdViews, Long> {
 
     @Query("SELECT av.videoAd, COUNT(av) " +
             "FROM AdViews av " +
-            "WHERE FUNCTION('DATE_FORMAT', av.createdAt, '%Y%m%d') = :today " +
-            "GROUP BY av.videoAd.videoAdId")
+            "WHERE FUNCTION('DATE_FORMAT', av.createdAt, '%Y%m%d') = FUNCTION('DATE_FORMAT', :today, '%Y%m%d') " +
+            "GROUP BY av.videoAd")
     List<Object[]> countGroupedByVideoIdAndVideoAdId(@Param("today") LocalDate today);
 
 }

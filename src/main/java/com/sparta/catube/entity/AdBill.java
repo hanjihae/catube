@@ -30,10 +30,10 @@ public class AdBill {
 
     private double totalAmount;
 
-    public static AdBill of(VideoAd videoAd, double totalAmount) {
+    public static AdBill of(VideoAd videoAd, LocalDate today, double totalAmount) {
         return AdBill.builder()
                 .videoAd(videoAd)
-                .createdAt(LocalDate.now())
+                .createdAt(today)
                 .totalAmount(totalAmount)
                 .build();
     }

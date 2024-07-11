@@ -30,10 +30,10 @@ public class AdStat {
 
     private int dailyViewCount;
 
-    public static AdStat of(VideoAd videoAd, int dailyViewCount) {
+    public static AdStat of(VideoAd videoAd, LocalDate today, int dailyViewCount) {
         return AdStat.builder()
                 .videoAd(videoAd)
-                .createdAt(LocalDate.now())
+                .createdAt(today)
                 .dailyViewCount(dailyViewCount)
                 .build();
     }

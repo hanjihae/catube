@@ -20,11 +20,11 @@ public class VideoStatController {
 
     private final VideoStatService videoStatService;
 
-    @PostMapping("/save-daily")
-    public void saveDailyVideoStat() throws Exception {
-        videoStatService.saveDailyStat();
-        System.out.println("1일치 조회수, 재생시간 저장 완료");
-    }
+//    @PostMapping("/save-daily")
+//    public void saveDailyVideoStat() throws Exception {
+//        videoStatService.saveDailyStat();
+//        System.out.println("1일치 조회수, 재생시간 저장 완료");
+//    }
 
     @GetMapping("/search-daily-cnt")
     public ResponseEntity<List<ViewCountRankDto>> searchDailyVideoStatCnt() throws Exception {

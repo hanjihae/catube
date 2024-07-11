@@ -80,4 +80,8 @@ public class Video extends Timestamped {
         this.videoTotalPlaytime = videoTotalPlaytime;
     }
 
+    public void saveBillOrNot(boolean billOrNot) {
+        this.billOrNot = billOrNot;
+    }
+
 }

@@ -42,4 +42,8 @@ public class VideoAd {
     public void saveAdWatchedCount(int adWatchedCount) {
         this.adWatchedCount = adWatchedCount;
     }
+
+    public void saveBillOrNot(boolean billOrNot) {
+        this.billOrNot = billOrNot;
+    }
 }

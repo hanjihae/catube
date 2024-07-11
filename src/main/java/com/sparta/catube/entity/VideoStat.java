@@ -30,10 +30,10 @@ public class VideoStat {
     private int dailyViewCount;
     private long dailyPlayTime;
 
-    public static VideoStat of(Video video, int dailyViewCount, long dailyPlayTime) {
+    public static VideoStat of(Video video, LocalDate today, int dailyViewCount, long dailyPlayTime) {
         return VideoStat.builder()
                 .video(video)
-                .createdAt(LocalDate.now())
+                .createdAt(today)
                 .dailyViewCount(dailyViewCount)
                 .dailyPlayTime(dailyPlayTime)
                 .build();

@@ -150,19 +150,19 @@ public class VideoService {
             // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
 //            if (!video.getUser().getUserId().equals(user.getUserId())) {
                 // 해당 동영상에 대한 개인의 시청기록 생성일자가 현재 시간보다 30초 이후일 때 +1 카운트
-                Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
-                if (recentViewsOptional.isPresent()) {  // 이전 시청기록이 있다면
-                    Views recentViews = recentViewsOptional.get();
-                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
-                        // 시청기록 생성
-                        Views views = Views.of(user, video);
-                        viewsRepository.save(views);
-                    }
-                } else {    // 이전 시청기록이 없다면
+//                Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
+//                if (recentViewsOptional.isPresent()) {  // 이전 시청기록이 있다면
+//                    Views recentViews = recentViewsOptional.get();
+//                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
+//                        // 시청기록 생성
+//                        Views views = Views.of(user, video);
+//                        viewsRepository.save(views);
+//                    }
+//                } else {    // 이전 시청기록이 없다면
                     // 시청기록 생성
                     Views views = Views.of(user, video);
                     viewsRepository.save(views);
-                }
+//                }
 //            }
             return new VideoDto(video);
         } catch (Exception e) {
@@ -211,17 +211,16 @@ public class VideoService {
             // 마지막 재생시간 갱신
             views.saveViewsLastWatchedTime(lastWatchedTime);
         }
-//        long totalPlayTimeOfVideo = video.getVideoTotalPlaytime() + playTime;
         // 마지막 재생시점 저장
         views.saveViewsPlaytime(playTime);
         viewsRepository.save(views);
         try {
+            // 본인이 만든 동영상이 아닐 때
 //            if (!video.getUser().getUserId().equals(user.getUserId())) {
+                // 30초 전에 본 시청기록이 있다면
 //                if (previousViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
                     adViewsRepository.saveAll(adViewsToSave);   // 광고 시청기록 생성
                     videoAdRepository.saveAll(vasToSave);   // 각 광고 누적조회수 갱신
-//                    video.saveVideoTotalPlaytime(totalPlayTimeOfVideo); // 해당 동영상의 총 재생시간 갱신
-//                    videoRepository.save(video);
 //                }
 //            }
             return new VideoDto(video);

@@ -18,11 +18,11 @@ public class BillController {
 
     private final BillService billService;
 
-    @PostMapping("/save-daily")
-    public void saveDailyBill() throws Exception {
-        billService.calculateVideoAmount();
-        billService.calculateAdAmount();
-    }
+//    @PostMapping("/save-daily")
+//    public void saveDailyBill() throws Exception {
+//        billService.calculateVideoAmount();
+//        billService.calculateAdAmount();
+//    }
 
     @GetMapping("/search-daily")
     public ResponseEntity<List<Object>> searchDailyBill() throws Exception {

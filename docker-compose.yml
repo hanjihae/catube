@@ -16,6 +16,23 @@ services:
     networks:
       - app-network
 
+  batch:
+    image: hanjihae/catube-app:latest
+    container_name: catube-batch
+    build:
+      context: ../catube-batch
+      dockerfile: ./Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:${DB_PORT}/${SPRING_APPLICATION_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - app-network
+
   db:
     image: mysql:8
     ports:

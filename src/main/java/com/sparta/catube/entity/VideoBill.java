@@ -29,10 +29,10 @@ public class VideoBill {
 
     private double totalAmount;
 
-    public static VideoBill of(Video video, double totalAmount) {
+    public static VideoBill of(Video video, LocalDate today, double totalAmount) {
         return VideoBill.builder()
                 .video(video)
-                .createdAt(LocalDate.now())
+                .createdAt(today)
                 .totalAmount(totalAmount)
                 .build();
     }
