@@ -41,6 +41,18 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     // webflux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.16.4'
+    // Spring Boot Starter Test (includes JUnit, Mockito, etc.)
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Mockito Core (optional, if you need additional Mockito functionality)
+//    testImplementation 'org.mockito:mockito-core'
+
+    implementation 'io.netty:netty-all:4.1.70.Final' // Netty core
+//    implementation 'io.netty:netty-resolver-dns:4.1.70.Final' // Netty DNS resolver
+//    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.70.Final' // Netty native DNS resolver for MacOS
+
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'

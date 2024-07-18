@@ -7,6 +7,8 @@ import com.sparta.catube.entity.*;
 import com.sparta.catube.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class VideoService {
 
+    private final RedissonClient redissonClient;
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
     private final ViewsRepository viewsRepository;
@@ -143,11 +147,19 @@ public class VideoService {
 
     @Transactional
     public VideoDto watchVideo(Long videoId) throws Exception {
-        Video video = getVideo(videoId);
-        User user = getAuthenticatedUser();
-        try {
-            // 본인이 본인 동영상을 보면 조회수 카운트 X - 누적조회수는 배치 돌리고 나서 시청기록 세서 한꺼번에 플러스
-            // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
+//        String lockKey = "video:lock:" + videoId;
+//        RLock lock = redissonClient.getLock(lockKey);
+//        try {
+//            boolean isLocked = lock.tryLock(500, 1500, TimeUnit.MILLISECONDS); // 락 획득 시간 설정
+//            if (!isLocked) {
+//                throw new Exception("Unable to acquire lock");
+//            }
+
+            Video video = getVideo(videoId);
+            User user = getAuthenticatedUser();
+            try {
+                // 본인이 본인 동영상을 보면 조회수 카운트 X - 누적조회수는 배치 돌리고 나서 시청기록 세서 한꺼번에 플러스
+                // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
 //            if (!video.getUser().getUserId().equals(user.getUserId())) {
                 // 해당 동영상에 대한 개인의 시청기록 생성일자가 현재 시간보다 30초 이후일 때 +1 카운트
 //                Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
@@ -159,15 +171,20 @@ public class VideoService {
 //                        viewsRepository.save(views);
 //                    }
 //                } else {    // 이전 시청기록이 없다면
-                    // 시청기록 생성
-                    Views views = Views.of(user, video);
-                    viewsRepository.save(views);
+                // 시청기록 생성
+                Views views = Views.of(user, video);
+                viewsRepository.save(views);
 //                }
 //            }
-            return new VideoDto(video);
-        } catch (Exception e) {
-            throw new Exception(ErrorMessage.FAILED_WATCH_VIDEO.getMessage());
-        }
+                return new VideoDto(video);
+            } catch (Exception e) {
+                throw new Exception(ErrorMessage.FAILED_WATCH_VIDEO.getMessage());
+            }
+//        } catch (Exception e) {
+//            throw new Exception("Failed to watch video with id: " + videoId, e);
+//        } finally {
+//            lock.unlock();
+//        }
     }
 
     @Transactional

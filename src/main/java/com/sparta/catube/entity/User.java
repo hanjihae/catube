@@ -51,4 +51,9 @@ public class User extends Timestamped {
     public void saveUserPw(String userPw) {
         this.userPw = userPw;
     }
+
+    // test
+    public void saveUserId(Long userId) {
+        this.userId = userId;
+    }
 }

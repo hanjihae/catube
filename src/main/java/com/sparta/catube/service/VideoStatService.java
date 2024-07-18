@@ -57,8 +57,7 @@ public class VideoStatService {
         for (Object[] vs : dailyStats) {
             Video video = (Video)vs[0];
             int viewCount = ((Number)vs[1]).intValue();
-            int totalViewCount = video.getVideoTotalViews() + viewCount;
-            dailyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, totalViewCount, today, today));
+            dailyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, video.getVideoTotalViews(), today, today));
         }
         return dailyStatList;
     }
@@ -70,8 +69,7 @@ public class VideoStatService {
         for (Object[] vs : dailyStats) {
             Video video = (Video)vs[0];
             long playTime = (long)vs[1];
-            long totalPlayTime = video.getVideoTotalPlaytime() + playTime;
-            dailyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, totalPlayTime, today, today));
+            dailyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, video.getVideoTotalPlaytime(), today, today));
         }
         return dailyStatList;
     }
@@ -86,8 +84,7 @@ public class VideoStatService {
         for (Object[] vs : weeklyStats) {
             Video video = (Video)vs[0];
             int viewCount = ((Number)vs[1]).intValue();
-            int totalViewCount = video.getVideoTotalViews() + viewCount;
-            weeklyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, totalViewCount, today, today));
+            weeklyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, video.getVideoTotalViews(), today, today));
         }
         return weeklyStatList;
     }
@@ -102,8 +99,7 @@ public class VideoStatService {
         for (Object[] vs : weeklyStats) {
             Video video = (Video)vs[0];
             long playTime = (long)vs[1];
-            long totalPlayTime = video.getVideoTotalPlaytime() + playTime;
-            weeklyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, totalPlayTime, startOfWeek, endOfWeek));
+            weeklyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, video.getVideoTotalPlaytime(), startOfWeek, endOfWeek));
         }
         return weeklyStatList;
     }
@@ -118,8 +114,7 @@ public class VideoStatService {
         for (Object[] vs : monthlyStats) {
             Video video = (Video)vs[0];
             int viewCount = ((Number)vs[1]).intValue();
-            int totalViewCount = video.getVideoTotalViews() + viewCount;
-            monthlyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, totalViewCount, startOfMonth, endOfMonth));
+            monthlyStatList.add(new ViewCountRankDto(video.getVideoId(), video.getVideoTitle(), viewCount, video.getVideoTotalViews(), startOfMonth, endOfMonth));
         }
         return monthlyStatList;
     }
@@ -134,8 +129,7 @@ public class VideoStatService {
         for (Object[] vs : monthlyStats) {
             Video video = (Video)vs[0];
             long playTime = (long)vs[1];
-            long totalPlayTime = video.getVideoTotalPlaytime() + playTime;
-            monthlyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, totalPlayTime, startOfMonth, endOfMonth));
+            monthlyStatList.add(new PlayTimeRankDto(video.getVideoId(), video.getVideoTitle(), playTime, video.getVideoTotalPlaytime(), startOfMonth, endOfMonth));
         }
         return monthlyStatList;
     }

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     image: hanjihae/catube-app:latest
@@ -9,6 +11,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:${DB_PORT}/${SPRING_APPLICATION_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -26,6 +29,7 @@ services:
       - "8081:8080"
     depends_on:
       - db
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:${DB_PORT}/${SPRING_APPLICATION_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
@@ -64,6 +68,14 @@ services:
       - 80:80
     depends_on:
       - web
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 

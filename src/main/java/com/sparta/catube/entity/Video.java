@@ -84,4 +84,13 @@ public class Video extends Timestamped {
         this.billOrNot = billOrNot;
     }
 
+    // test
+    public void saveVideoId(Long videoId) {
+        this.videoId = videoId;
+    }
+
+    public void saveVideoLength(long videoLength) {
+        this.videoLength = videoLength;
+    }
+
 }
