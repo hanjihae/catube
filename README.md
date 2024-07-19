@@ -1,5 +1,5 @@
 <p align="left">
-  <img src="https://postfiles.pstatic.net/MjAyNDA3MjBfMjM0/MDAxNzIxNDEwNDExMDUz.CKXpW2vWbk0CpB2vtjDPlnixI046ROcbx28qJ6heHbog.ShKsdHjEK7f0I2penVHVqeNcT-5fPCIjMG56lOQbt4wg.PNG/SE-17a259f2-2116-4cd0-84b3-579aa4bc5bdc.png?type=w2000" width="600">
+  <img src="https://postfiles.pstatic.net/MjAyNDA3MjBfMjM0/MDAxNzIxNDEwNDExMDUz.CKXpW2vWbk0CpB2vtjDPlnixI046ROcbx28qJ6heHbog.ShKsdHjEK7f0I2penVHVqeNcT-5fPCIjMG56lOQbt4wg.PNG/SE-17a259f2-2116-4cd0-84b3-579aa4bc5bdc.png?type=w2000" width="500">
 </p>
 
 # **💸PROJECT CATUBE💸**
