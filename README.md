@@ -2,7 +2,6 @@
   <img src="https://postfiles.pstatic.net/MjAyNDA3MThfMjUz/MDAxNzIxMjk4NjEwMjc0.Qfu2uA9DKJbg9GLiB9ypBC4FA4XbIpWhCgSbW5d_a0Ug.D_ztFOkmVOKd5lyWI1Xww53EKdbcE8Hfd2hLN2HzJvAg.PNG/catube_(1).png?type=w2000">
 </p>
 # **💸PROJECT CATUBE💸**
-# **💸PROJECT CATUBE💸**
 
 ### 프로젝트 소개
 캣튜브(CATUBE)는 크리에이터가 동영상 창작물을 효율적으로 관리하고 그에 따른 수익을 투명하게 관리할 수 있는 동영상 플랫폼입니다. JWT 토큰을 이용한 소셜 로그인과 회원가입 및 자동 로그인 기능을 제공하여 높은 접근성을 제공합니다. 또한, 동영상 조회수와 광고 시청 횟수 데이터를 실시간으로 생성하며, 1일, 1주일, 1달 동안의 주요 지표를 통계적으로 제공하여 투명한 정산 과정을 지원합니다.
