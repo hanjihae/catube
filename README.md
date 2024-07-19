@@ -11,8 +11,8 @@
 2024.06.19 ~ 2024.07.19
 
 ## ERD
-<p align="center">
-  <img src="https://postfiles.pstatic.net/MjAyNDA3MjBfMjQ2/MDAxNzIxNDA2NjQ3MzI1.ZGJ0PU7MqhzjWNI6Mud8HD2MkMl7_dTfA1rNZXcraLMg.VbqIIziJs880PPOMoFtr_926H3-pPo_ulZAFw9n-0FIg.PNG/image.png?type=w2000" height="600">
+<p align="left">
+  <img src="https://postfiles.pstatic.net/MjAyNDA3MjBfMjQ2/MDAxNzIxNDA2NjQ3MzI1.ZGJ0PU7MqhzjWNI6Mud8HD2MkMl7_dTfA1rNZXcraLMg.VbqIIziJs880PPOMoFtr_926H3-pPo_ulZAFw9n-0FIg.PNG/image.png?type=w2000" height="1000">
 </p>
 
 ## 주요 기능
