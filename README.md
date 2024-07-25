@@ -29,7 +29,7 @@
 모놀리식 아키텍처를 따르며 Docker와 MySQL을 사용해 환경을 구성합니다.
 
 ## API 문서
-
+[![Postman API Documentation](https://img.shields.io/badge/Postman-API%20Documentation-orange?style=for-the-badge&logo=postman)](https://documenter.getpostman.com/view/34905018/2sA3kYhyw6)
 
 ## 트러블슈팅
 - [동영상/광고 시청기록 생성 방식 변경](https://candle-wasp-12a.notion.site/44e0c718251b4a47a7475db665145230?pvs=4)
