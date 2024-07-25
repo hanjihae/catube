@@ -32,6 +32,6 @@
 
 
 ## 트러블슈팅
-- [동영상/광고 시청기록 생성 방식 변경](https://candle-wasp-12a.notion.site/0ccde46cc76a4a48b4614b2cfa5a4fc7?pvs=4)
-- [API 코드와 배치 작업을 별도의 서버로 분리](https://candle-wasp-12a.notion.site/API-07e37cd7df134f98996c614f9c39cb34?pvs=4)
-- [매일 자정 실행되는 통계/정산 배치를 병렬 처리해 총 소요시간 11.81% 감소](https://candle-wasp-12a.notion.site/11-81-74f69e5a189f48688724922f44dad937?pvs=4)
+- [동영상/광고 시청기록 생성 방식 변경](https://candle-wasp-12a.notion.site/44e0c718251b4a47a7475db665145230?pvs=4)
+- [API 코드와 배치 작업을 별도의 서버로 분리](https://candle-wasp-12a.notion.site/API-898548b7689945bbb69f415b2713b870?pvs=4)
+- [매일 자정 실행되는 통계/정산 배치를 병렬 처리해 총 소요시간 11.81% 감소](https://candle-wasp-12a.notion.site/11-81-dba0e501da9941dc9c5e497c78f37f0b?pvs=4)

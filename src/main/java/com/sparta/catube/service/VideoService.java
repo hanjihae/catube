@@ -161,10 +161,10 @@ public class VideoService {
                 // 본인이 본인 동영상을 보면 조회수 카운트 X - 누적조회수는 배치 돌리고 나서 시청기록 세서 한꺼번에 플러스
                 // 동영상 업로더의 ID와 인증된 사용자 ID를 비교해서 일치하지 않을 때
 //            if (!video.getUser().getUserId().equals(user.getUserId())) {
-                // 해당 동영상에 대한 개인의 시청기록 생성일자가 현재 시간보다 30초 이후일 때 +1 카운트
 //                Optional<Views> recentViewsOptional = viewsRepository.findLatestViewByUserAndVideo(user, video);
 //                if (recentViewsOptional.isPresent()) {  // 이전 시청기록이 있다면
 //                    Views recentViews = recentViewsOptional.get();
+                // 해당 동영상에 대한 개인의 시청기록 생성일자가 현재 시간보다 30초 이후일 때 +1 카운트
 //                  if (recentViews.getCreatedAt().isBefore(LocalDateTime.now().minusSeconds(30))) {
 //                        // 시청기록 생성
 //                        Views views = Views.of(user, video);
