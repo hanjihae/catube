@@ -16,33 +16,22 @@
 </p>
 
 ## 주요 기능
-- 동영상 관리
+- 소셜(카카오) 로그인/회원가입
+- 동영상 CRUD
 - 동영상 및 광고 시청기록 관리
 - 동영상 및 광고 통계 생성
 - 매일 자정 통계 및 정산 작업 수행
 
 ## 기술 스택
-- 언어: Java 21
-- DB: MySQL
-- 빌드 도구: Gradle
-- 프레임워크: Spring Boot 3.3.0
-- 컨테이너화 도구: Docker / Docker Compose
-- 배치 처리: Spring Batch 5
-- 인증 방식: JWT (JSON Web Token)
-- 통신 방식: HTTP Request / Response
-
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"><img src="https://img.shields.io/badge/Spring Batch-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"><img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"><br><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white"><img src="https://img.shields.io/badge/Github Actions-2088FF?style=for-the-badge&logo=Github Actions&logoColor=white">
+<img src="https://img.shields.io/badge/Java-21-007396?style=for-the-badge&logo=java&logoColor=white" alt="Java Badge"><img src="https://img.shields.io/badge/Spring%20Boot-3.3.0-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" alt="Spring Boot Badge"><img src="https://img.shields.io/badge/Gradle-8.8-02303A?style=for-the-badge&logo=gradle&logoColor=white" alt="Gradle Badge"><img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=Spring%20Security&logoColor=white" alt="Spring Security Badge"><img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white" alt="JWT Badge"><img src="https://img.shields.io/badge/Spring%20Batch-5.0-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt="Spring Batch 5 Badge"><img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=Hibernate&logoColor=white" alt="JPA Badge"><img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white" alt="MySQL Badge"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white" alt="Docker Badge"><img src="https://img.shields.io/badge/Docker Compose-2496ED?style=for-the-badge&logo=Docker&logoColor=white" alt="Docker Compose Badge"><img src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=GitHub%20Actions&logoColor=white" alt="GitHub Actions Badge">
 
 ## 프로젝트 아키텍처
 모놀리식 아키텍처를 따르며 Docker와 MySQL을 사용해 환경을 구성합니다.
 
+## API 문서
+
+
 ## 트러블슈팅
-- #### JWT 토큰 파싱 에러 해결
-  액세스 토큰이 만료되었을 때 DB에 저장된 리프레시 토큰을 비교하여 새로운 액세스 토큰을 생성하는 API를 구현하였습니다. 토큰 값 전달 과정과 파싱 로직에 문제가 없음에도 불구하고, 체인 필터에 의해 서비스 로직으로 전달되지 않는 문제가 있었습니다. 이를 해결하기 위해 JwtRequestFilter에서 UserDetailsService를 이용해 사용자 정보를 가져오도록 코드를 수정했습니다. 또한, HttpMessageNotReadableException을 처리하는 RequestDto 파일을 작성한 후 에러를 해결할 수 있었습니다. 이를 통해 이후 Authorization 헤더 값을 받아오는 방식으로 보다 간단하게 리팩토링할 수 있는 기반을 마련할 수 있었습니다.
-
-- #### 동영상 및 광고 통계를 구현하기 위한 시청 기록 생성 방식 변경
-  기존에는 유저별, 동영상별 시청 기록을 개별적으로 생성하여 시청할 때마다 업데이트하는 방식으로 서비스 로직을 구현하였으나, 이 방법으로는 기간별 시청 기록을 생성할 수 없음을 인지하였습니다. 이에 따라 시청 기록을 행 단위로 저장하여 기간별로 쌓인 행을 쿼리로 COUNT하여 통계를 완성할 수 있도록 방식 변경을 수행하였습니다.
-
-- #### 배치 병렬 처리로 처리 시간 감소
-  통계, 정산, 동영상 및 광고 누적 조회수 업데이트 작업이 순차적으로 이루어질 때, 각 잡에 들어있는 동영상과 광고 처리를 서로 독립적으로 서비스 로직을 구성해 배치 작업이 동시에 이루어질 수 있도록 taskexecutor를 사용했고 처리 시간을 단축하였습니다.
-
+- [동영상/광고 시청기록 생성 방식 변경](https://candle-wasp-12a.notion.site/0ccde46cc76a4a48b4614b2cfa5a4fc7?pvs=4)
+- [API 코드와 배치 작업을 별도의 서버로 분리](https://candle-wasp-12a.notion.site/API-07e37cd7df134f98996c614f9c39cb34?pvs=4)
+- [매일 자정 실행되는 통계/정산 배치를 병렬 처리해 총 소요시간 11.81% 감소](https://candle-wasp-12a.notion.site/11-81-74f69e5a189f48688724922f44dad937?pvs=4)

@@ -1,14 +1,13 @@
-version: '3.8'
-
 services:
   app:
     image: hanjihae/catube-app:latest
     container_name: catube
+    platform: linux/arm64
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "8080:8080"
+      - "18080:8080"
     depends_on:
       - db
       - redis
@@ -22,6 +21,7 @@ services:
   batch:
     image: hanjihae/catube-app:latest
     container_name: catube-batch
+    platform: linux/arm64
     build:
       context: ../catube-batch
       dockerfile: ./Dockerfile
@@ -57,7 +57,7 @@ services:
     expose:
       - 8080
     ports:
-      - 8080:8080
+      - 8082:8080
     networks:
       - app-network
 

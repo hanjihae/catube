@@ -44,10 +44,13 @@ public class Video extends Timestamped {
     @JoinColumn(name = "videoUserId")
     private User user;
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", orphanRemoval = false)
+    private List<VideoAd> videoAdList;
+
+    @OneToMany(mappedBy = "video", orphanRemoval = false)
     private List<VideoBill> videoBills;
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video", orphanRemoval = false)
     private List<VideoStat> videoStats;
 
     public static Video of(User user, VideoRequestDto videoRequestDto) {
